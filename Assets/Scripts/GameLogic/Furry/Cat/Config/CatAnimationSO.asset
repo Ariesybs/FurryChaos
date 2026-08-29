@@ -1,0 +1,87 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 638d38647eee43f0bb818ee5af6a9c5c, type: 3}
+  m_Name: CatAnimationSO
+  m_EditorClassIdentifier: 
+  Idles:
+  - Clip: {fileID: 7400084, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 1
+  - Clip: {fileID: 7400086, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 1
+  - Clip: {fileID: 7400088, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 1
+  - Clip: {fileID: 7400090, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 1
+  SitToIdle:
+    Clip: {fileID: 7400116, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 1
+  WalkClip:
+    Clip: {fileID: 7400176, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 1
+  Run:
+    Clip: {fileID: 7400112, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 1
+  Jump:
+    Clip: {fileID: 7400092, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 1
+  IdleToSit:
+    Clip: {fileID: 7400124, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 1
+  SitIdles:
+  - Clip: {fileID: 7400118, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 0
+  - Clip: {fileID: 7400120, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 0
+  - Clip: {fileID: 7400122, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 0
+  SitEnd:
+    Clip: {fileID: 0}
+    FadeDuration: 0.15
+    Speed: 1
+    MatchMovementSpeed: 0
+    AuthoredMoveSpeed: 1
