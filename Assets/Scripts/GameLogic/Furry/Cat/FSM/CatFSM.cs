@@ -29,6 +29,7 @@ public sealed class CatFSM
         m_StateFmsDict.Add(State.Locomotion, new CatFsmLocomotion(cat));
         m_StateFmsDict.Add(State.Walk, new CatFsmWalk(cat));
         m_StateFmsDict.Add(State.Sit, new CatFsmSit(cat));
+        m_StateFmsDict.Add(State.Jump, new CatFsmJump(cat));
 
         foreach (var state in m_StateFmsDict.Values)
         {
@@ -46,7 +47,7 @@ public sealed class CatFSM
         m_CurrentState?.OnInput(cmd);
     }
 
-    public void SwitchState(State fromState,State nextState)
+    public void SwitchState(State fromState,State nextState,object enterArg = null)
     {
         if (!m_StateFmsDict.ContainsKey(nextState))
         {
@@ -56,7 +57,8 @@ public sealed class CatFSM
         var newState = m_StateFmsDict.Get(nextState);
         m_CurrentState?.OnExit();
         m_CurrentState = newState;
-        m_CurrentState.OnEnter(fromState);
+        Debug.Log($"State Changed: From {fromState} =====> {newState}");
+        m_CurrentState.OnEnter(fromState,enterArg);
     }
 
     public IFurryFSM GetCurrentFsm()

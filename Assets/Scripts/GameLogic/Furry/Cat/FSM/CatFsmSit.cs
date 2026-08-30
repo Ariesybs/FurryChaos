@@ -5,7 +5,7 @@ public class CatFsmSit : CatFsmBase
         CurState = CatFSM.State.Sit;
     }
 
-    public override void OnEnter(CatFSM.State fromState)
+    public override void OnEnter(CatFSM.State fromState, object enterArg = null)
     {
         base.OnEnter(fromState);
         switch (fromState)

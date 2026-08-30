@@ -10,10 +10,25 @@ public class CatFsmLocomotion : CatFsmBase
         CurState = CatFSM.State.Locomotion;
     }
 
+    public override void OnEnter(CatFSM.State fromState, object enterArg = null)
+    {
+        base.OnEnter(fromState, enterArg);
+        m_CatGait = CatGait.Idle;
+        cat.animancer.UpdateLocomotion(m_CatGait);
+    }
+
     public override void OnInput(InputCmd cmd)
     {
         base.OnInput(cmd);
         m_CachedCmd = cmd;
+        if (cmd.IsPressed(InputAction.Jump))
+        {
+            if (cat.jumpScanner.TryFindBestJumpLink(m_DesiredMoveDirection, out CatJumpLink jumpLink))
+            {
+                SwitchState(CurState, CatFSM.State.Jump,jumpLink);
+                return;
+            }
+        }
         if (m_CachedCmd.Direction == Vector2.zero)
         {
             m_CatGait = CatGait.Idle;
@@ -30,6 +45,7 @@ public class CatFsmLocomotion : CatFsmBase
         {
             m_CatGait = CatGait.Walk;
         }
+        
     }
 
     public override void BeforeCharacterUpdate(float deltaTime)
@@ -60,7 +76,16 @@ public class CatFsmLocomotion : CatFsmBase
             var magnitude = moveDirection.magnitude;
             moveDirection = Vector3.ProjectOnPlane(moveDirection, cat.motor.GroundingStatus.GroundNormal).normalized * magnitude;
         }
-        currentVelocity = moveDirection * GetMoveSpeed();
+        if (cat.motor.GroundingStatus.IsStableOnGround)
+        {
+            currentVelocity = moveDirection * GetMoveSpeed();
+        }
+        else
+        {
+            Vector3 planarVelocity = moveDirection * GetMoveSpeed();
+            Vector3 verticalVelocity = Vector3.Project(currentVelocity, cat.motor.CharacterUp);
+            currentVelocity = planarVelocity + verticalVelocity + cat.moveConfig.Gravity * deltaTime;
+        }
     }
     
     public override void UpdateRotation(ref Quaternion currentRotation, float deltaTime)

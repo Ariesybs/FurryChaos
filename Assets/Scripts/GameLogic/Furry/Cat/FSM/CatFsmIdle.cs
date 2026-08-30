@@ -10,7 +10,7 @@ public class CatFsmIdle : CatFsmBase
         CurState = CatFSM.State.Idle;
     }
 
-    public override void OnEnter(CatFSM.State fromState)
+    public override void OnEnter(CatFSM.State fromState,object enterArg = null)
     {
         base.OnEnter(fromState);
         switch (fromState)

@@ -4,8 +4,7 @@ using UnityEngine;
 public sealed class CatAnimationProfile : ScriptableObject
 {
     [Header("Idle")]
-    public CatClip[] Idles;
-    public CatClip SitToIdle;
+    public CatClip Idle;
 
     [Header("Walk")]
     public CatClip WalkClip;

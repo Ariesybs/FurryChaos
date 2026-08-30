@@ -14,7 +14,7 @@ public class CatFsmBase : IFurryFSM
         
     }
 
-    public virtual void OnEnter(CatFSM.State fromState)
+    public virtual void OnEnter(CatFSM.State fromState, object enterArg = null)
     {
         
     }
@@ -34,9 +34,9 @@ public class CatFsmBase : IFurryFSM
         
     }
 
-    public virtual void SwitchState(CatFSM.State fromState, CatFSM.State newState)
+    public virtual void SwitchState(CatFSM.State fromState, CatFSM.State newState,object enterArg = null)
     {
-        cat.catFsm.SwitchState(fromState,newState);
+        cat.catFsm.SwitchState(fromState,newState,enterArg);
     }
 
     public virtual void UpdateRotation(ref Quaternion currentRotation, float deltaTime)

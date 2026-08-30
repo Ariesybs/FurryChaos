@@ -15,4 +15,6 @@ MonoBehaviour:
   CrouchSpeed: 0.3
   WalkSpeed: 0.6
   RunSpeed: 3
+  JumpChargeTime: 0.25
   RotationSharpness: 12
+  Gravity: {x: 0, y: -25, z: 0}

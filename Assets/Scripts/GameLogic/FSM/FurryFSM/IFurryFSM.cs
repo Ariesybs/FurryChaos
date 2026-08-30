@@ -4,7 +4,7 @@ using UnityEngine;
 public interface IFurryFSM
 {
     public void OnInit();
-    public void OnEnter(CatFSM.State fromState);
+    public void OnEnter(CatFSM.State fromState, object enterArg = null);
     public void OnUpdate();
     public void OnInput(InputCmd cmd);
     public void OnExit();

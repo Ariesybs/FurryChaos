@@ -12,31 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 638d38647eee43f0bb818ee5af6a9c5c, type: 3}
   m_Name: CatAnimationSO
   m_EditorClassIdentifier: 
-  Idles:
-  - Clip: {fileID: 7400084, guid: c112213050d990440add80f0add79251, type: 3}
+  Idle:
+    Clip: {fileID: 7400084, guid: c112213050d990440add80f0add79251, type: 3}
     FadeDuration: 0.15
     Speed: 1
-    MatchMovementSpeed: 0
-    AuthoredMoveSpeed: 1
-  - Clip: {fileID: 7400086, guid: c112213050d990440add80f0add79251, type: 3}
-    FadeDuration: 0.15
-    Speed: 1
-    MatchMovementSpeed: 0
-    AuthoredMoveSpeed: 1
-  - Clip: {fileID: 7400088, guid: c112213050d990440add80f0add79251, type: 3}
-    FadeDuration: 0.15
-    Speed: 1
-    MatchMovementSpeed: 0
-    AuthoredMoveSpeed: 1
-  - Clip: {fileID: 7400090, guid: c112213050d990440add80f0add79251, type: 3}
-    FadeDuration: 0.15
-    Speed: 1
-    MatchMovementSpeed: 0
-    AuthoredMoveSpeed: 1
-  SitToIdle:
-    Clip: {fileID: 7400116, guid: c112213050d990440add80f0add79251, type: 3}
-    FadeDuration: 0.15
-    Speed: 1.5
     MatchMovementSpeed: 0
     AuthoredMoveSpeed: 1
   WalkClip:

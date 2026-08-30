@@ -9,6 +9,7 @@ public class CatInput
 
     public void LockInput(bool _lock)
     {
+        // Debug.Log($"Lock Input: {_lock}");
         m_LockInput = _lock;
     }
 

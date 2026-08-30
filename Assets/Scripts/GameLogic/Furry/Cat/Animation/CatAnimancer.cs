@@ -20,13 +20,11 @@ public class CatAnimancer : MonoBehaviour
     {
         if (profile != null)
         {
-            m_CatClipsDict.Add("Idle",GetRandomClip(profile.Idles));
-            m_CatClipsDict.Add("Sit_To_Idle",profile.SitToIdle);
+            m_CatClipsDict.Add("Idle",profile.Idle);
             m_CatClipsDict.Add("Walk",profile.WalkClip);
             m_CatClipsDict.Add("Crouch",profile.CrouchClip);
             m_CatClipsDict.Add("Run",profile.RunClip);
-            m_CatClipsDict.Add("Idle_To_Sit",profile.IdleToSit);
-            m_CatClipsDict.Add("Sit_Idle",GetRandomClip(profile.SitIdles));
+            m_CatClipsDict.Add("Jump",profile.JumpClip);
         }
     }
 
@@ -42,7 +40,7 @@ public class CatAnimancer : MonoBehaviour
         return currentState;
     }
     
-    public void UpdateLocomotion(CatGait gait, float moveSpeed)
+    public void UpdateLocomotion(CatGait gait, float moveSpeed = 0)
     {
         if (gait != m_CurCatGait)
         {

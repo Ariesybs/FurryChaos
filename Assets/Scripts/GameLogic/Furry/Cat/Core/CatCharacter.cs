@@ -11,7 +11,9 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
     // 运动参数
     public CatMovementProfile moveConfig;
     // 输入
-    private CatInput input;
+    public CatInput input;
+    // 跳跃扫描
+    public CatJumpScanner jumpScanner;
     // 相机
     [HideInInspector]
     public Camera catCam;
