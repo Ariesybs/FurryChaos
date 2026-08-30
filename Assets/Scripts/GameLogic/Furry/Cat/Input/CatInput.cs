@@ -29,14 +29,17 @@ public class CatInput
         {
             Direction =  Vector2.ClampMagnitude(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")), 1f)
         };
-        var actions = InputAction.None;
-        if (Input.GetKeyDown(KeyCode.Space))
-            actions |= InputAction.Jump;
-        if (Input.GetKeyDown(KeyCode.C))
-            actions |= InputAction.Sit;
-        if (Input.GetKeyDown(KeyCode.Z))
-            actions |= InputAction.Lie;
-        cmd.PressedActions = actions;
+        var pressedActions = InputAction.None;
+        var heldActions = InputAction.None;
+        
+        if (Input.GetKeyDown(KeyCode.Space)) pressedActions |= InputAction.Jump;
+        if (Input.GetKeyDown(KeyCode.C)) pressedActions |= InputAction.Sit;
+        if (Input.GetKeyDown(KeyCode.Z)) pressedActions |= InputAction.Lie;
+        if (Input.GetKey(KeyCode.LeftControl)) heldActions |= InputAction.Crouch;
+        if (Input.GetKey(KeyCode.LeftShift)) heldActions |= InputAction.Run;
+        
+        cmd.PressedActions = pressedActions;
+        cmd.HeldActions = heldActions;
         return cmd;
     }
     
@@ -49,17 +52,25 @@ public enum InputAction : byte
     Jump = 1 << 0,
     Sit  = 1 << 1,
     Lie  = 1 << 2,
+    Crouch = 1 << 3,
+    Run = 1 << 4,
 }
 
 public struct InputCmd
 {
     public Vector2 Direction;
     public InputAction PressedActions;
+    public InputAction HeldActions;
     public static InputCmd Empty => default;
     
     public readonly bool IsPressed(InputAction action)
     {
         return (PressedActions & action) != 0;
+    }
+
+    public readonly bool IsHeld(InputAction action)
+    {
+        return (HeldActions & action) != 0;
     }
 
     public bool IsEmpty()

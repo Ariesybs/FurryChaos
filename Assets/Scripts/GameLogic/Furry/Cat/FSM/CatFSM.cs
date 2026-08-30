@@ -8,6 +8,7 @@ public sealed class CatFSM
     public enum State
     {
         None,
+        Locomotion,
         Idle,
         Walk,
         Sit,
@@ -25,7 +26,7 @@ public sealed class CatFSM
     public CatFSM(CatCharacter cat)
     {
         m_Cat = cat;
-        m_StateFmsDict.Add(State.Idle, new CatFsmIdle(cat));
+        m_StateFmsDict.Add(State.Locomotion, new CatFsmLocomotion(cat));
         m_StateFmsDict.Add(State.Walk, new CatFsmWalk(cat));
         m_StateFmsDict.Add(State.Sit, new CatFsmSit(cat));
 

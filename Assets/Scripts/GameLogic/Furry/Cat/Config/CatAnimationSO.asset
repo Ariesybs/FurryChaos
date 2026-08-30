@@ -36,31 +36,37 @@ MonoBehaviour:
   SitToIdle:
     Clip: {fileID: 7400116, guid: c112213050d990440add80f0add79251, type: 3}
     FadeDuration: 0.15
-    Speed: 1
+    Speed: 1.5
     MatchMovementSpeed: 0
     AuthoredMoveSpeed: 1
   WalkClip:
     Clip: {fileID: 7400176, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.1
+    Speed: 1
+    MatchMovementSpeed: 1
+    AuthoredMoveSpeed: 0.4
+  RunClip:
+    Clip: {fileID: 7400110, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.1
+    Speed: 1
+    MatchMovementSpeed: 1
+    AuthoredMoveSpeed: 2
+  JumpClip:
+    Clip: {fileID: 7400098, guid: c112213050d990440add80f0add79251, type: 3}
     FadeDuration: 0.15
     Speed: 1
     MatchMovementSpeed: 0
     AuthoredMoveSpeed: 1
-  Run:
-    Clip: {fileID: 7400112, guid: c112213050d990440add80f0add79251, type: 3}
-    FadeDuration: 0.15
+  CrouchClip:
+    Clip: {fileID: 7400036, guid: c112213050d990440add80f0add79251, type: 3}
+    FadeDuration: 0.1
     Speed: 1
-    MatchMovementSpeed: 0
-    AuthoredMoveSpeed: 1
-  Jump:
-    Clip: {fileID: 7400092, guid: c112213050d990440add80f0add79251, type: 3}
-    FadeDuration: 0.15
-    Speed: 1
-    MatchMovementSpeed: 0
-    AuthoredMoveSpeed: 1
+    MatchMovementSpeed: 1
+    AuthoredMoveSpeed: 0.3
   IdleToSit:
     Clip: {fileID: 7400124, guid: c112213050d990440add80f0add79251, type: 3}
     FadeDuration: 0.15
-    Speed: 1
+    Speed: 1.5
     MatchMovementSpeed: 0
     AuthoredMoveSpeed: 1
   SitIdles:

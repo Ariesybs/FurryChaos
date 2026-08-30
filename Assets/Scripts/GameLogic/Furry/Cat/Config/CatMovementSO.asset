@@ -12,10 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a0339c0794248d7b47bdce98ebcd465, type: 3}
   m_Name: CatMovementSO
   m_EditorClassIdentifier: 
-  MoveSpeed: 1
-  GroundSharpness: 10.3
-  AirAcceleration: 8
-  RotationSharpness: 3
-  ForwardCosThreshold: 0.8
-  MinTurnSpeedMultiplier: 0.1
-  Gravity: {x: 0, y: -25, z: 0}
+  CrouchSpeed: 0.3
+  WalkSpeed: 0.6
+  RunSpeed: 3
+  RotationSharpness: 12

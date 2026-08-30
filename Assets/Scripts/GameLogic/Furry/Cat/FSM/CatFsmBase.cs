@@ -5,7 +5,7 @@ public class CatFsmBase : IFurryFSM
 {
     protected CatCharacter cat;
     protected CatFSM.State CurState;
-    protected CatFsmBase(CatCharacter cat)
+    public CatFsmBase(CatCharacter cat)
     {
         this.cat = cat;
     }

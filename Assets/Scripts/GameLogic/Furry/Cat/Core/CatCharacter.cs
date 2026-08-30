@@ -8,15 +8,21 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
     public CatFSM catFsm;
     // 动画机
     public CatAnimancer animancer;
+    // 运动参数
+    public CatMovementProfile moveConfig;
     // 输入
-    public CatInput input;
+    private CatInput input;
+    // 相机
+    [HideInInspector]
+    public Camera catCam;
     public KinematicCharacterMotor motor;
     private void Awake()
     {
         motor.CharacterController = this;
         catFsm = new CatFSM(this);
-        catFsm.SwitchState(CatFSM.State.None,CatFSM.State.Idle);
+        catFsm.SwitchState(CatFSM.State.None,CatFSM.State.Locomotion);
         input = new CatInput();
+        catCam = Camera.main;
     }
 
     private void Start()
@@ -29,10 +35,7 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
         catFsm?.OnUpdate();
 
         var cmd = input.ReadCmd();
-        if (!cmd.IsEmpty())
-        {
-            catFsm?.OnInput(cmd);
-        }
+        catFsm?.OnInput(cmd);
     }
 
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
