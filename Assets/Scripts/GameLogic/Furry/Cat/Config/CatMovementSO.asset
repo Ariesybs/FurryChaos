@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: CatMovementSO
   m_EditorClassIdentifier: 
   CrouchSpeed: 0.3
-  WalkSpeed: 0.6
+  WalkSpeed: 0.8
   RunSpeed: 3
   JumpChargeTime: 0.25
   RotationSharpness: 12
