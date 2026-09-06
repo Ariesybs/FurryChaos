@@ -13,8 +13,7 @@ public class CatFsmLocomotion : CatFsmBase
     public override void OnEnter(CatFSM.State fromState, object enterArg = null)
     {
         base.OnEnter(fromState, enterArg);
-        m_CatGait = CatGait.Idle;
-        cat.animancer.UpdateLocomotion(m_CatGait);
+
     }
 
     public override void OnInput(InputCmd cmd)
@@ -105,7 +104,15 @@ public class CatFsmLocomotion : CatFsmBase
         var planarVelocity = Vector3.ProjectOnPlane(cat.motor.Velocity, cat.motor.CharacterUp);
         // 动画更新
         var moveSpeed = planarVelocity.magnitude;
-        cat.animancer.UpdateLocomotion(m_CatGait,moveSpeed);
+        if (m_CatGait == CatGait.Crouch)
+        {
+            cat.animancer.UpdateCrouchVelocity(cat.motor.Velocity, deltaTime);
+        }
+        else
+        {
+            cat.animancer.UpdateLocomotionVelocity(cat.motor.Velocity, deltaTime);
+        }
+        
     }
 
     private float GetMoveSpeed()
@@ -113,7 +120,7 @@ public class CatFsmLocomotion : CatFsmBase
         switch (m_CatGait)
         {
             case CatGait.Idle:
-                return 0;
+                break;
             case CatGait.Crouch:
                 return cat.moveConfig.CrouchSpeed;
             case CatGait.Walk:

@@ -9,12 +9,21 @@ public class CatAnimancer : MonoBehaviour
 {
     [SerializeField] private AnimancerComponent animancer;
     [SerializeField] private CatAnimationProfile profile;
+    [SerializeField] private MixerTransition2D crouchMixer;
+    [SerializeField] private MixerTransition2D locomotionMixer;
+    [SerializeField] private float smoothness = 10f;
+    
+    [HideInInspector]
+    public Vector2 TargetParameter { get; private set; }    
+    [HideInInspector]
+    public Vector2 SmoothedParameter => smoothedParameter; // 实际喂给 Mixer 的值
 
     private AnimationClip currentClip;
     private AnimancerState currentState;
     private CatGait m_CurCatGait;
     private CatClip m_CurCatClip;
-    private Dictionary<string, CatClip> m_CatClipsDict = new();
+    private readonly Dictionary<string, CatClip> m_CatClipsDict = new();
+    private Vector2 smoothedParameter;
 
     private void Awake()
     {
@@ -40,41 +49,59 @@ public class CatAnimancer : MonoBehaviour
         return currentState;
     }
     
-    public void UpdateLocomotion(CatGait gait, float moveSpeed = 0)
+    public void UpdateLocomotionVelocity(Vector3 worldVelocity, float deltaTime)
     {
-        if (gait != m_CurCatGait)
+        if (locomotionMixer.State == null || !locomotionMixer.State.IsCurrent)
         {
-            m_CurCatGait = gait;
-            switch (gait)
-            {
-                case CatGait.Idle:
-                    SwitchAnimation("Idle");
-                    break;
-                case CatGait.Walk:
-                    SwitchAnimation("Walk");
-                    break;
-                case CatGait.Run:
-                    SwitchAnimation("Run");
-                    break;
-                case CatGait.Crouch:
-                    SwitchAnimation("Crouch");
-                    break;
-            }
+            animancer.Play(locomotionMixer);
         }
-        MatchMovementAnimationSpeed(moveSpeed);
+
+        if (locomotionMixer.State == null)
+        {
+            return;
+        }
+        
+        CalculateAnimationParameter(worldVelocity, deltaTime);
+        locomotionMixer.State.Parameter = smoothedParameter;
+    }
+
+    public void UpdateCrouchVelocity(Vector3 worldVelocity, float deltaTime)
+    {
+        if (crouchMixer.State == null || !crouchMixer.State.IsCurrent)
+        {
+            animancer.Play(crouchMixer);
+        }
+
+        if (crouchMixer.State == null)
+        {
+            return;
+        }
+
+        CalculateAnimationParameter(worldVelocity, deltaTime);
+        crouchMixer.State.Parameter = smoothedParameter;
+    }
+
+    private void CalculateAnimationParameter(Vector3 worldVelocity, float deltaTime)
+    {
+        Vector3 planarVelocity = Vector3.ProjectOnPlane(worldVelocity, transform.up);
+        Vector3 localVelocity = transform.InverseTransformDirection(planarVelocity);
+        Vector2 targetParameter = new Vector2(localVelocity.x, localVelocity.z);
+        TargetParameter = targetParameter; // 记录一下
+        float t = 1f - Mathf.Exp(-smoothness * deltaTime);
+        smoothedParameter = Vector2.Lerp(smoothedParameter, targetParameter, t);
     }
 
     private void MatchMovementAnimationSpeed(float moveSpeed)
     {
-        if (currentState == null || m_CurCatClip == null) return;
+        if (locomotionMixer == null || locomotionMixer.State == null) return;
         // 不进行动画速度匹配
         if (!m_CurCatClip.MatchMovementSpeed)
         {
-            currentState.Speed = m_CurCatClip.Speed;
+            locomotionMixer.State.Speed = m_CurCatClip.Speed;
             return;
         }
         var speedRatio = moveSpeed / m_CurCatClip.AuthoredMoveSpeed;
-        currentState.Speed = m_CurCatClip.Speed * speedRatio;
+        locomotionMixer.State.Speed = m_CurCatClip.Speed * speedRatio;
     }
 
     public void PlaySequence(string[] keys)
