@@ -86,7 +86,7 @@ public class UnityClientTransport : IClientTransport
                     m_Connection = default;
                     IsRunning = false;
                     Disconnected?.Invoke();
-                    break;
+                    return;
             }
         }
     }
