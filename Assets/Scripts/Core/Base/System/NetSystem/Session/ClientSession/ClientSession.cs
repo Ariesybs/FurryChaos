@@ -47,6 +47,7 @@ public class ClientSession : NetSession
     
     private void OnConnected()
     {
+        Log.Debug("客户端链接成功");
         Connected?.Invoke();
     }
     private void OnDisconnected()

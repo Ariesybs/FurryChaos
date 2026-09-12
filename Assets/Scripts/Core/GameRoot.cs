@@ -23,6 +23,11 @@ public class GameRoot : MonoBehaviour
     
     private void RegisterSystems()
     {
+#if UNITY_SERVER
+        RegisterSystem(new LogSystem(GameLogLevel.Info, true));
+#else
+        RegisterSystem(new LogSystem(GameLogLevel.Debug, true));
+#endif
         RegisterSystem(new MsgSystem());
         RegisterSystem(new NetworkSystem());
     }
@@ -98,7 +103,7 @@ public class GameRoot : MonoBehaviour
     {
         // 逆序释放
         var systems = m_GameSystems.Values.ToArray();
-        for (int i = systems.Length -1 ; i > 0; i--)
+        for (int i = systems.Length -1 ; i >= 0; i--)
         {
             var system = systems[i];
             system.OnDispose();

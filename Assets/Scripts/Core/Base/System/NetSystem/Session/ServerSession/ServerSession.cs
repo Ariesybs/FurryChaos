@@ -8,7 +8,7 @@ public class ServerSession : NetSession
     public event Action<long> ClientDisconnected;
     
     private readonly IServerTransport m_Transport;
-
+    private const ushort port = 7777;
     public ServerSession()
     {
         m_Transport = new UnityServerTransport();
@@ -19,7 +19,14 @@ public class ServerSession : NetSession
 
     public override void Init()
     {
-        Listen(7777);
+        if (Listen(port))
+        {
+            Log.Info($"服务器启动成功，正在监听 UDP {port}");
+        }
+        else
+        {
+            Log.Error($"服务器启动失败，无法监听 UDP {port}");
+        }
     }
 
     public bool Listen(ushort port)
@@ -40,10 +47,12 @@ public class ServerSession : NetSession
     
     private void OnClientConnected(int connectionId)
     {
+        Log.Info($"客户端连接：{connectionId}");
         ClientConnected?.Invoke(connectionId);
     }
     private void OnClientDisconnected(int connectionId)
     {
+        Log.Info($"客户端断开：{connectionId}");
         ClientDisconnected?.Invoke(connectionId);
     }
 

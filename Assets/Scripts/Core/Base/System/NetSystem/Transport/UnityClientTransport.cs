@@ -23,7 +23,7 @@ public class UnityClientTransport : IClientTransport
             IsRunning = m_Connection.IsCreated;
             return IsRunning;
         }
-        catch (Exception e)
+        catch (Exception)
         {
             if (m_Driver.IsCreated)
             {
