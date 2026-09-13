@@ -59,7 +59,10 @@ public enum InputAction : byte
 
 public struct InputCmd
 {
+    public uint Sequence;
+    public uint ClientTick;
     public Vector2 Direction;
+    public float CameraYaw;
     public InputAction PressedActions;
     public InputAction HeldActions;
     public static InputCmd Empty => default;

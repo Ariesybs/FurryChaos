@@ -6,10 +6,28 @@ using UnityEngine;
 public class GameRoot : MonoBehaviour
 {
     public static GameRoot Instance { get; private set; }
+
+    #region 游戏系统
+
+    public LogSystem GameLog; // 日志系统
+    public MsgSystem GameMsg; // 事件系统
+    public TimeSystem GameTimer; // 计时系统
+    [Header("网络系统")]
+    public NetworkSystem GameNet; // 网络系统
+
+    public LoadSystem GameLoader; // 载入系统
+    
+    #endregion
+    
     private readonly Dictionary<Type, ISystem> m_GameSystems = new();
 
     private void Awake()
     {
+        Application.runInBackground = true;
+#if UNITY_SERVER
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 60;
+#endif
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -24,12 +42,14 @@ public class GameRoot : MonoBehaviour
     private void RegisterSystems()
     {
 #if UNITY_SERVER
-        RegisterSystem(new LogSystem(GameLogLevel.Info, true));
+        GameLog = RegisterSystem(new LogSystem(GameLogLevel.Info, true));
 #else
-        RegisterSystem(new LogSystem(GameLogLevel.Debug, true));
+        GameLog = RegisterSystem(new LogSystem());
 #endif
-        RegisterSystem(new MsgSystem());
-        RegisterSystem(new NetworkSystem());
+        GameMsg = RegisterSystem(new MsgSystem());
+        GameTimer = RegisterSystem(new TimeSystem());
+        GameNet = RegisterSystem(new NetworkSystem());
+        GameLoader = RegisterSystem(new LoadSystem());
     }
     private void InitializeSystems()
     {
@@ -84,13 +104,14 @@ public class GameRoot : MonoBehaviour
         DisposeAllSystems();
     }
 
-    public void RegisterSystem<T>(T system)  where T : class, ISystem
+    private T RegisterSystem<T>(T system)  where T : class, ISystem
     {
         if (system == null)
         {
-            return;
+            return null;
         }
         m_GameSystems.TryAdd(typeof(T), system);
+        return system;
     }
 
     public T GetSystem<T>()

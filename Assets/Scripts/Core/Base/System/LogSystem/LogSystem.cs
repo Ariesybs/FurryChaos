@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Concurrent;
 using System.IO;
+using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
@@ -22,22 +22,33 @@ public sealed class LogSystem : LogicSystem
         public readonly GameLogLevel Level;
         public readonly string Message;
         public readonly Exception Exception;
+        public readonly string FilePath;
+        public readonly int LineNumber;
+        public readonly string MemberName;
 
-        public LogEntry(GameLogLevel level, string message, Exception exception)
+        public LogEntry(
+            GameLogLevel level,
+            string message,
+            Exception exception,
+            string filePath,
+            int lineNumber,
+            string memberName)
         {
             Time = DateTime.Now;
             ThreadId = Environment.CurrentManagedThreadId;
             Level = level;
             Message = message;
             Exception = exception;
+            FilePath = filePath;
+            LineNumber = lineNumber;
+            MemberName = memberName;
         }
     }
 
-    private readonly ConcurrentQueue<LogEntry> m_Entries = new();
-
+    private readonly object m_FileLock = new();
     private readonly bool m_WriteToFile;
     private StreamWriter m_Writer;
-    private bool m_Disposed;
+    private volatile bool m_Disposed;
 
     public GameLogLevel MinimumLevel { get; set; }
     public string LogFilePath { get; private set; }
@@ -76,11 +87,6 @@ public sealed class LogSystem : LogicSystem
         }
     }
 
-    public override void OnUpdate(float deltaTime)
-    {
-        Flush();
-    }
-
     public override void OnPause()
     {
         Flush();
@@ -88,72 +94,112 @@ public sealed class LogSystem : LogicSystem
 
     public override void OnDispose()
     {
-        if (m_Disposed)
-            return;
+        lock (m_FileLock)
+        {
+            if (m_Disposed)
+                return;
 
-        m_Disposed = true;
-
-        Flush();
-
-        m_Writer?.Flush();
-        m_Writer?.Dispose();
-        m_Writer = null;
+            m_Disposed = true;
+            m_Writer?.Flush();
+            m_Writer?.Dispose();
+            m_Writer = null;
+        }
     }
 
-    public void Debug(string message)
+    [HideInCallstack]
+    public void Debug(
+        string message,
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string memberName = "")
     {
-        Write(GameLogLevel.Debug, message);
+        Write(GameLogLevel.Debug, message, null, filePath, lineNumber, memberName);
     }
 
-    public void Info(string message)
+    [HideInCallstack]
+    public void Info(
+        string message,
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string memberName = "")
     {
-        Write(GameLogLevel.Info, message);
+        Write(GameLogLevel.Info, message, null, filePath, lineNumber, memberName);
     }
 
-    public void Warning(string message)
+    [HideInCallstack]
+    public void Warning(
+        string message,
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string memberName = "")
     {
-        Write(GameLogLevel.Warning, message);
+        Write(GameLogLevel.Warning, message, null, filePath, lineNumber, memberName);
     }
 
-    public void Error(string message)
-    {
-        Write(GameLogLevel.Error, message);
-    }
-
+    [HideInCallstack]
     public void Error(
         string message,
-        Exception exception)
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string memberName = "")
     {
-        Write(GameLogLevel.Error, message, exception);
+        Write(GameLogLevel.Error, message, null, filePath, lineNumber, memberName);
     }
 
+    [HideInCallstack]
+    public void Error(
+        string message,
+        Exception exception,
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string memberName = "")
+    {
+        Write(GameLogLevel.Error, message, exception, filePath, lineNumber, memberName);
+    }
+
+    [HideInCallstack]
     public void Fatal(
         string message,
-        Exception exception = null)
+        Exception exception = null,
+        [CallerFilePath] string filePath = "",
+        [CallerLineNumber] int lineNumber = 0,
+        [CallerMemberName] string memberName = "")
     {
-        Write(GameLogLevel.Fatal, message, exception);
+        Write(GameLogLevel.Fatal, message, exception, filePath, lineNumber, memberName);
     }
 
     public void Flush()
     {
-        while (m_Entries.TryDequeue(out var entry))
+        lock (m_FileLock)
         {
-            Output(entry);
+            m_Writer?.Flush();
         }
-
-        m_Writer?.Flush();
     }
 
-    private void Write(GameLogLevel level, string message, Exception exception = null)
+    [HideInCallstack]
+    private void Write(
+        GameLogLevel level,
+        string message,
+        Exception exception,
+        string filePath,
+        int lineNumber,
+        string memberName)
     {
         if (m_Disposed || level < MinimumLevel)
         {
             return;
         }
 
-        m_Entries.Enqueue(new LogEntry(level, message ?? string.Empty, exception));
+        Output(new LogEntry(
+            level,
+            message ?? string.Empty,
+            exception,
+            filePath,
+            lineNumber,
+            memberName));
     }
 
+    [HideInCallstack]
     private void Output(in LogEntry entry)
     {
         var formattedMessage =
@@ -186,20 +232,38 @@ public sealed class LogSystem : LogicSystem
                 break;
         }
 
-        if (m_Writer == null)
-            return;
-
-        try
+        lock (m_FileLock)
         {
-            m_Writer.WriteLine(formattedMessage);
-        }
-        catch (Exception exception)
-        {
-            UnityEngine.Debug.LogError(
-                $"写入日志文件失败：{exception}");
+            if (m_Writer == null)
+                return;
 
-            m_Writer.Dispose();
-            m_Writer = null;
+            try
+            {
+                m_Writer.WriteLine(formattedMessage);
+            }
+            catch (Exception exception)
+            {
+                UnityEngine.Debug.LogError(
+                    $"写入日志文件失败：{exception}");
+
+                    m_Writer.Dispose();
+                    m_Writer = null;
+            }
         }
+    }
+
+    private static string ToUnityPath(string filePath)
+    {
+        if (string.IsNullOrEmpty(filePath))
+            return filePath;
+
+        filePath = filePath.Replace('\\', '/');
+        var assetsIndex = filePath.IndexOf(
+            "/Assets/",
+            StringComparison.OrdinalIgnoreCase);
+
+        return assetsIndex >= 0
+            ? filePath.Substring(assetsIndex + 1)
+            : filePath;
     }
 }

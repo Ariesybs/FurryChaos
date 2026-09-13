@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using UnityEngine;
 
 public class ClientSession : NetSession
@@ -14,7 +15,11 @@ public class ClientSession : NetSession
     private long m_LocalEntityId;
     private uint m_LatestServerTick;
     private double m_LatestTickReceiveTime;
+    private double m_LastServerMessageTime;
     private bool m_HasReceivedSnapshot;
+
+    private TimerHandle m_HeartbeatTimer; // 心跳计时
+    private TimerHandle m_ReconnectTimer; // 短线重连
     
     public double EstimatedServerTick =>
         !m_HasReceivedSnapshot ? 0 : 
@@ -40,6 +45,17 @@ public class ClientSession : NetSession
         Connect("127.0.0.1",7777);
     }
 
+    public override void Send(NetworkMsg msg)
+    {
+        if (msg == null)
+        {
+            return;
+        }
+
+        var payload = msg.Encode();
+        m_Transport.SendToServer(payload);
+    }
+
     public override void Poll()
     {
         m_Transport.Poll();
@@ -48,7 +64,13 @@ public class ClientSession : NetSession
     private void OnConnected()
     {
         Log.Debug("客户端链接成功");
+        StarHeartbeat();
         Connected?.Invoke();
+    }
+
+    private void StarHeartbeat()
+    {
+        // GameTimer.RegisterLoop(5);
     }
     private void OnDisconnected()
     {
@@ -58,11 +80,14 @@ public class ClientSession : NetSession
 
     private void OnDataReceived(byte[] payload)
     {
+        m_LastServerMessageTime = Time.realtimeSinceStartupAsDouble;
         if (payload == null || payload.Length == 0)
         {
             return;
         }
-        ClientMsgRouter.HandleNetworkMsg(payload);
+        using var stream = new MemoryStream(payload, false);
+        using var reader = new BinaryReader(stream);
+        ClientMsgRouter.HandleNetworkMsg(reader.ReadUInt16(), payload);
     }
 
     public override void Dispose()

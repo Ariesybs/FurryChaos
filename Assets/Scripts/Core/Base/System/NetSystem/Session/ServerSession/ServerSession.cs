@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 public class ServerSession : NetSession
 {
@@ -19,7 +20,7 @@ public class ServerSession : NetSession
 
     public override void Init()
     {
-        if (Listen(port))
+        if (Listen())
         {
             Log.Info($"服务器启动成功，正在监听 UDP {port}");
         }
@@ -29,7 +30,18 @@ public class ServerSession : NetSession
         }
     }
 
-    public bool Listen(ushort port)
+    public override void Send(int connectionId, NetworkMsg msg)
+    {
+        if (msg == null)
+        {
+            return;
+        }
+
+        var payload = msg.Encode();
+        m_Transport.SendToClient(connectionId,payload);
+    }
+
+    private bool Listen()
     {
         ResetState();
         return m_Transport.Listen(port);
@@ -62,7 +74,9 @@ public class ServerSession : NetSession
         {
             return;
         }
-        ServerMsgRouter.HandleNetworkMsg(connectionId,payload);
+        using var stream = new MemoryStream(payload, false);
+        using var reader = new BinaryReader(stream);
+        ServerMsgRouter.HandleNetworkMsg(connectionId,reader.ReadUInt16());
     }
 
     public override void Dispose()

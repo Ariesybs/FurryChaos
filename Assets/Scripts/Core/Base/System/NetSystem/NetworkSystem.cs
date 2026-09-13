@@ -1,6 +1,13 @@
+using System;
+using UnityEngine;
+
+[Serializable]
 public class NetworkSystem : LogicSystem
 {
+    public NetworkConfig Config;
     private NetSession m_NetSession;
+    [HideInInspector] 
+    public int ConnectionId;
     public override void OnInit()
     {
         base.OnInit();
@@ -28,5 +35,16 @@ public class NetworkSystem : LogicSystem
     {
         base.OnDispose();
         m_NetSession.Dispose();
+        ConnectionId = 0;
+    }
+
+    public void Send(NetworkMsg msg)
+    {
+        m_NetSession?.Send(msg);
+    }
+
+    public void Send(int connectionId, NetworkMsg msg)
+    {
+        m_NetSession?.Send(connectionId,msg);
     }
 }
