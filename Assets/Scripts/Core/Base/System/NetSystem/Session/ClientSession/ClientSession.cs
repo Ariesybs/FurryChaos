@@ -45,8 +45,9 @@ public class ClientSession : NetSession
         Connect("127.0.0.1",7777);
     }
 
-    public override void Send(NetworkMsg msg)
+    public override void Send( NetworkMsg msg)
     {
+        base.Send( msg);
         if (msg == null)
         {
             return;
@@ -64,6 +65,7 @@ public class ClientSession : NetSession
     private void OnConnected()
     {
         Log.Debug("客户端链接成功");
+        GameTimer.Cancel(m_ReconnectTimer);
         StarHeartbeat();
         Connected?.Invoke();
     }
@@ -75,6 +77,7 @@ public class ClientSession : NetSession
     private void OnDisconnected()
     {
         ResetState();
+        StarReconnect();
         Disconnected?.Invoke();
     }
 
@@ -105,5 +108,10 @@ public class ClientSession : NetSession
         m_LatestServerTick = 0;
         m_LatestTickReceiveTime = 0;
         m_HasReceivedSnapshot = false;
+    }
+
+    private void StarReconnect(float interval = 3f)
+    {
+        m_ReconnectTimer = GameTimer.RegisterLoop(interval, () => Connect("127.0.0.1", 7777));
     }
 }

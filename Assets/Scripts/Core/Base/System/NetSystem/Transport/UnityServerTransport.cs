@@ -34,7 +34,7 @@ public class UnityServerTransport : IServerTransport
         return true;
     }
 
-    public void SendToClient(int connectionId, byte[] payload)
+    public void SendToClient(long connectionId, byte[] payload)
     {
         if (!IsRunning || payload == null || payload.Length == 0)
         {

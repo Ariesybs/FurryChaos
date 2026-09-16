@@ -1,6 +1,7 @@
 public static class GameNet
 {
-    public static void Send(NetworkMsg msg)
+    public static long MyConnectionId => GetMyConnectionId();
+    public static void SendS(NetworkMsg msg)
     {
         if (msg == null)
         {
@@ -11,7 +12,7 @@ public static class GameNet
         netSystem?.Send(msg);
     } 
     
-    public static void Send(int connectionId,NetworkMsg msg)
+    public static void SendC(long connectionId,NetworkMsg msg)
     {
         if (msg == null)
         {
@@ -21,4 +22,20 @@ public static class GameNet
         var netSystem = GameRoot.Instance.GetSystem<NetworkSystem>();
         netSystem?.Send(connectionId,msg);
     } 
+    
+    public static void Broadcast(NetworkMsg msg)
+    {
+        if (msg == null)
+        {
+            return;
+        }
+        GameRoot.Instance.GameNet?.Broadcast(msg);
+    }
+
+    public static long GetMyConnectionId()
+    {
+        return 1;
+        var netSystem = GameRoot.Instance.GetSystem<NetworkSystem>();
+        return netSystem.ConnectionId;
+    }
 }

@@ -10,11 +10,21 @@ public static class ClientMsgRouter
         switch (type)
         {
             case NetworkMessageType.S2C.JoinResponse:
+            {
                 var msg = NetworkMsg.Get<S2C_JoinResponse>();
                 msg.Decode(payload);
                 ClientMsgHandler.HandlePlayerJoin(msg);
-                NetworkMsg.Release(msg);
+                msg.Release();
                 break;
+            }
+            case NetworkMessageType.S2C.CatSnapshot:
+            {
+                var msg = NetworkMsg.Get<S2C_CatSnapshot>();
+                msg.Decode(payload);
+                ClientMsgHandler.HandleCatSnapshot(msg);
+                msg.Release();
+                break;
+            }
         }
     }
 }

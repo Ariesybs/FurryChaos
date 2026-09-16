@@ -17,7 +17,7 @@ public class LoginPanelCtrl : MonoBehaviour
     private void OnLoginBtnClick()
     {
         var msg = NetworkMsg.Get<C2S_JoinRequest>();
-        GameNet.Send(msg);
+        GameNet.SendS(msg);
     }
     
 }

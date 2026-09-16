@@ -38,6 +38,6 @@ public class DogCombat : MonoBehaviour
 
     public void ApplyHit(GameObject target)
     {
-        Debug.Log("Attack Cat!");
+        // Debug.Log("Attack Cat!");
     }
 }

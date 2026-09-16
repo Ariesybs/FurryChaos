@@ -43,8 +43,13 @@ public class NetworkSystem : LogicSystem
         m_NetSession?.Send(msg);
     }
 
-    public void Send(int connectionId, NetworkMsg msg)
+    public void Send(long connectionId, NetworkMsg msg)
     {
         m_NetSession?.Send(connectionId,msg);
+    }
+    
+    public void Broadcast(NetworkMsg msg)
+    {
+        m_NetSession?.Broadcast(msg);
     }
 }

@@ -6,6 +6,7 @@ public abstract class NetworkMsg : INetworkMsg
     public abstract byte[] Encode();
     public abstract void Decode(byte[] payload);
     public abstract void Reset();
+    public abstract void Release();
 
     public static T Get<T>() where T : NetworkMsg , new()
     {

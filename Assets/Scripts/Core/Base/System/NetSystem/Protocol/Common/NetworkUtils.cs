@@ -3,6 +3,18 @@ using UnityEngine;
 
 public static class NetworkUtils
 {
+    public static bool IsServer()
+    {
+#if UNITY_SERVER
+        return true;
+#endif
+        return false;
+    }
+
+    public static bool IsClient()
+    {
+        return !IsServer();
+    }
     public static void WriteVector2(BinaryWriter writer, Vector2 value)
     {
         writer.Write(value.x);

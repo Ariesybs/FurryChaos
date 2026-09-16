@@ -6,4 +6,13 @@ public static class ClientMsgHandler
         GameRoot.Instance.GetSystem<NetworkSystem>().ConnectionId = msg.ConnectionId;
         GameSceneLoader.LoadScene(SceneDefine.GameScene);
     }
+    
+    public static void HandleCatSnapshot(S2C_CatSnapshot msg)
+    {
+        if (msg == null || msg.EntityId <= 0)
+        {
+            return;
+        }
+        GameRoot.Instance.GamePlayer?.GameCatSyncSystem?.HandleSnapshot(msg);
+    }
 }

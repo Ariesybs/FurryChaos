@@ -30,7 +30,7 @@ public class ServerSession : NetSession
         }
     }
 
-    public override void Send(int connectionId, NetworkMsg msg)
+    public override void Send(long connectionId, NetworkMsg msg)
     {
         if (msg == null)
         {
@@ -76,8 +76,18 @@ public class ServerSession : NetSession
         }
         using var stream = new MemoryStream(payload, false);
         using var reader = new BinaryReader(stream);
-        ServerMsgRouter.HandleNetworkMsg(connectionId,reader.ReadUInt16());
+        ServerMsgRouter.HandleNetworkMsg(connectionId,reader.ReadUInt16(),payload);
     }
+    
+    public override void Broadcast(NetworkMsg msg)
+    {
+        if (msg == null)
+        {
+            return;
+        }
+        m_Transport.Broadcast(msg.Encode());
+    }
+
 
     public override void Dispose()
     {

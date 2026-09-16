@@ -44,26 +44,27 @@ public class CatFsmLocomotion : CatFsmBase
         {
             m_CatGait = CatGait.Walk;
         }
-        
+        cat.CurrentAnimationState = m_CatGait switch
+        {
+            CatGait.Idle => CatCharacter.CatAnimationState.Idle,
+            CatGait.Walk => CatCharacter.CatAnimationState.Walk,
+            CatGait.Run => CatCharacter.CatAnimationState.Run,
+            CatGait.Crouch => CatCharacter.CatAnimationState.Crouch,
+            _ => CatCharacter.CatAnimationState.Idle
+        };
     }
 
     public override void BeforeCharacterUpdate(float deltaTime)
     {
         base.BeforeCharacterUpdate(deltaTime);
-        var cam = cat.catCam;
-        if (cam == null || m_CachedCmd.Direction.sqrMagnitude < 0.001f)
+        if (m_CachedCmd.Direction.sqrMagnitude < 0.001f)
         {
             m_DesiredMoveDirection = Vector3.zero;
+            return;
         }
-        var up = cat.motor.CharacterUp;
-        var cameraForward = Vector3.ProjectOnPlane(cam.transform.forward, up);
-        if (cameraForward.sqrMagnitude < 0.001f)
-        {
-            cameraForward = Vector3.ProjectOnPlane(cam.transform.up, up);
-        }
-        cameraForward.Normalize();
-        var cameraRight = Vector3.Cross(up, cameraForward).normalized;
-        m_DesiredMoveDirection = Vector3.ClampMagnitude(cameraRight * m_CachedCmd.Direction.x + cameraForward * m_CachedCmd.Direction.y, 1f);
+        Quaternion cameraYaw = Quaternion.Euler(0f, m_CachedCmd.CameraYaw, 0f);
+        Vector3 localDirection = new Vector3(m_CachedCmd.Direction.x, 0f, m_CachedCmd.Direction.y);
+        m_DesiredMoveDirection = Vector3.ClampMagnitude(cameraYaw * localDirection, 1f);
     }
 
     public override void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)

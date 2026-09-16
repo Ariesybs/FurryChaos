@@ -1,3 +1,4 @@
+using System;
 using UnityEngine.SceneManagement;
 
 public static class GameSceneLoader
@@ -6,7 +7,8 @@ public static class GameSceneLoader
         string sceneName,
         LoadSceneMode mode = LoadSceneMode.Single,
         bool activateImmediately = true, 
-        bool setActiveAfterLoad = false)
+        bool setActiveAfterLoad = false,
+        Action onCompleteLoad = null)
     {
         var gameLoader = GameRoot.Instance.GameLoader;
         if (gameLoader == null)

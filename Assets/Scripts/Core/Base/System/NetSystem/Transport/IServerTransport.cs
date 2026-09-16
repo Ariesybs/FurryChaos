@@ -9,7 +9,7 @@ public interface IServerTransport : IDisposable
     event Action<int, byte[]> DataReceived;
 
     bool Listen(ushort port);
-    void SendToClient(int connectionId, byte[] payload);
+    void SendToClient(long connectionId, byte[] payload);
     void Broadcast(byte[] payload);
     void Poll();
     void Stop();

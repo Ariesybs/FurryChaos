@@ -77,6 +77,19 @@ public struct InputCmd
         return (HeldActions & action) != 0;
     }
 
+    public static InputCmd GetCmdFromClientMsg(C2S_CatInputRequest msg)
+    {
+        return new InputCmd()
+        {
+            Sequence = msg.Sequence,
+            ClientTick = msg.ClientTick,
+            Direction = msg.Direction,
+            CameraYaw = msg.CameraYaw,
+            PressedActions = (InputAction)msg.PressedActions,
+            HeldActions = (InputAction)msg.HeldActions,
+        };
+    } 
+
     public bool IsEmpty()
     {
         return Direction == Vector2.zero && PressedActions == InputAction.None;;

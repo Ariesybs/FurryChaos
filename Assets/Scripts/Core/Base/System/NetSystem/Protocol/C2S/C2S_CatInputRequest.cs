@@ -26,6 +26,16 @@ public class C2S_CatInputRequest : C2SNetworkMsg
         return stream.ToArray();
     }
 
+    public void SetFromCmd(InputCmd cmd)
+    {
+        Sequence = cmd.Sequence;
+        ClientTick = cmd.ClientTick;
+        Direction = cmd.Direction;
+        CameraYaw = cmd.CameraYaw;
+        PressedActions = (byte)cmd.PressedActions;
+        HeldActions = (byte)cmd.HeldActions;
+    }
+
     public override void Decode(byte[] payload)
     {
         try

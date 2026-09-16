@@ -15,6 +15,12 @@ public class PlayerSystem : LogicSystem
         GameCatSyncSystem.OnUpdate(deltaTime);
     }
 
+    public override void OnFixedUpdate(float deltaTime)
+    {
+        base.OnFixedUpdate(deltaTime);
+        GameCatSyncSystem?.OnFixedUpdate(deltaTime);
+    }
+
     public override void OnDispose()
     {
         base.OnDispose();

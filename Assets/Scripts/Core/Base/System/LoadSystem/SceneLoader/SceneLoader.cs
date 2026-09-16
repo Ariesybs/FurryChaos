@@ -23,6 +23,8 @@ public sealed class SceneLoader : LogicSystem
     public event Action<string, Scene> LoadCompleted;
     public event Action<string, string> LoadFailed;
 
+    private event Action OnCompleteLoad;
+
     private AsyncOperation m_Operation;
     private bool m_SetActiveAfterLoad;
     private float m_LastReportedProgress = -1f;
@@ -38,7 +40,7 @@ public sealed class SceneLoader : LogicSystem
     /// <param name="setActiveAfterLoad">
     /// Additive加载完成后是否设为活动场景。
     /// </param>
-    public bool LoadScene(string sceneName, LoadSceneMode mode = LoadSceneMode.Single, bool activateImmediately = true, bool setActiveAfterLoad = false)
+    public bool LoadScene(string sceneName, LoadSceneMode mode = LoadSceneMode.Single, bool activateImmediately = true, bool setActiveAfterLoad = false, Action OnCompleteLoad = null)
     {
         if (IsLoading)
         {
@@ -77,6 +79,7 @@ public sealed class SceneLoader : LogicSystem
 
             m_Operation.allowSceneActivation = activateImmediately;
             LoadStarted?.Invoke(sceneName);
+            this.OnCompleteLoad = OnCompleteLoad;
             return true;
         }
         catch (Exception exception)
@@ -146,6 +149,7 @@ public sealed class SceneLoader : LogicSystem
         }
 
         LoadCompleted?.Invoke(sceneName, scene);
+        this.OnCompleteLoad?.Invoke();
     }
 
     private void SetProgress(float value)

@@ -4,6 +4,16 @@ using UnityEngine;
 
 public sealed class CatCharacter : MonoBehaviour , ICharacterController
 {
+    public enum CatAnimationState : byte
+    {
+        Idle,
+        Walk,
+        Run,
+        Crouch,
+        Jump,
+        Sit,
+        Lie
+    }
     // 状态机
     public CatFSM catFsm;
     // 动画机
@@ -18,6 +28,13 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
     [HideInInspector]
     public Camera catCam;
     public KinematicCharacterMotor motor;
+    public CatAnimationState CurrentAnimationState { get; set; }
+    
+    [Header("Debug")]
+    public bool enableLocalPredict;
+
+    private CatNetworkEntity m_Entity;
+    private CatSyncSystem m_SyncSystem;
     private void Awake()
     {
         motor.CharacterController = this;
@@ -25,11 +42,16 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
         catFsm.SwitchState(CatFSM.State.None,CatFSM.State.Locomotion);
         input = new CatInput();
         catCam = Camera.main;
+        m_Entity = GetComponent<CatNetworkEntity>();
+        m_SyncSystem = GameRoot.Instance.GamePlayer.GameCatSyncSystem;
     }
 
     private void Start()
     {
-        input.LockCursor(true);
+        if (m_Entity == null || m_Entity.Role == CatNetworkRole.LocalPlayer)
+        {
+            input.LockCursor(true);
+        }
     }
 
     private void Update()
@@ -37,7 +59,25 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
         catFsm?.OnUpdate();
 
         var cmd = input.ReadCmd();
-        catFsm?.OnInput(cmd);
+        if (catCam != null)
+        {
+            cmd.CameraYaw = catCam.transform.eulerAngles.y;
+        }
+        if (m_SyncSystem != null)
+        {
+            m_SyncSystem.SubmitLocalInput(m_Entity.EntityId,cmd);
+        }
+    }
+    
+    
+    private void ApplyInput(InputCmd command)
+    {
+        if (!enableLocalPredict)
+        {
+            return;
+        }
+        // 本地运行
+        catFsm?.OnInput(command);
     }
 
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
