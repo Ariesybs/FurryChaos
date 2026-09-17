@@ -5,6 +5,8 @@ using UnityEngine;
 public class CatJumpScanner : MonoBehaviour
 {
     private CatCharacter cat;
+    [Header("遮挡检测")]
+    [SerializeField] private LayerMask obstacleMask;
     [Header("扫描配置")]
     [SerializeField] private LayerMask jumpLinkMask;
     [SerializeField, Min(0.1f)] private float scanRadius = 3f;
@@ -48,15 +50,23 @@ public class CatJumpScanner : MonoBehaviour
             CatJumpLink link = candidateCollider.GetComponent<CatJumpLink>();
             if (link == null) continue;
             
-            if (!link.IsInActivationRange(characterPosition, characterUp))
-            {
-                // 不在范围
-                continue;
-            }
             if (!link.MatchesApproachDirection(characterPosition, searchDirection, characterUp))
             {
                 // 方向非法
                 continue;
+            }
+
+            if (link.IsInSamePlane(characterPosition, characterUp))
+            {
+                // 在同一平面
+                continue;
+            }
+            Vector3 eye = characterPosition + characterUp * 0.5f; // 从身体中心起算，避免擦到地面
+            Vector3 toLink = link.transform.position - eye;
+            float distance = toLink.magnitude;
+            if (distance > 0.001f && Physics.SphereCast(eye, 0.2f, toLink / distance, out _, distance, obstacleMask, QueryTriggerInteraction.Ignore))
+            {
+                continue; // 被墙挡住，跳过该候选
             }
             float score = CalculateScore(link, characterPosition, characterUp, searchDirection);
             

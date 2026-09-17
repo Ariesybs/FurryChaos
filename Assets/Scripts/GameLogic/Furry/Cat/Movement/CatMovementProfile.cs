@@ -10,6 +10,9 @@ public sealed class CatMovementProfile : ScriptableObject
     
     [Header("Jump")]
     public float JumpChargeTime = 1f;
+    public float JumpSpeed = 3f;
+    public float JumpMinDuration = 0.4f;
+    public float JumpMaxDuration = 0.8f;
 
     [Header("Rotation")] 
     public float RotationSharpness = 12;

@@ -59,7 +59,10 @@ public enum InputAction : byte
 
 public struct InputCmd
 {
+    public uint Sequence;
+    public uint ClientTick;
     public Vector2 Direction;
+    public float CameraYaw;
     public InputAction PressedActions;
     public InputAction HeldActions;
     public static InputCmd Empty => default;
@@ -73,6 +76,19 @@ public struct InputCmd
     {
         return (HeldActions & action) != 0;
     }
+
+    public static InputCmd GetCmdFromClientMsg(C2S_CatInputRequest msg)
+    {
+        return new InputCmd()
+        {
+            Sequence = msg.Sequence,
+            ClientTick = msg.ClientTick,
+            Direction = msg.Direction,
+            CameraYaw = msg.CameraYaw,
+            PressedActions = (InputAction)msg.PressedActions,
+            HeldActions = (InputAction)msg.HeldActions,
+        };
+    } 
 
     public bool IsEmpty()
     {

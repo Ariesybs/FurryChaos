@@ -5,6 +5,7 @@ using UnityEngine;
 /// 上下文跳跃连接。
 /// 当前物体的位置代表起跳区域中心，LandingPoint 代表落点。
 /// </summary>
+[RequireComponent(typeof(SphereCollider))]
 public sealed class CatJumpLink : MonoBehaviour
 {
     [Header("触发条件")]
@@ -20,14 +21,14 @@ public sealed class CatJumpLink : MonoBehaviour
     [Range(-1f, 1f)]
     public float MinApproachDot = 0.25f;
 
-    [Header("跳跃轨迹")]
-    [Tooltip("完成整个跳跃所需时间")]
-    [Min(0.1f)]
-    public float Duration = 0.8f;
-
     [Tooltip("跳跃最高点相对基础轨迹的高度")]
     [Min(0f)]
     public float ArcHeight = 1.5f;
+
+    [Header("触发条件")]
+    [Tooltip("高度差小于该值视为同一平面，不允许触发跳跃")]
+    [Min(0f)]
+    public float MinHeightDifference = 0.2f;
 
     [Tooltip("X 为归一化时间，Y 为归一化高度")]
     public AnimationCurve HeightCurve = new(
@@ -36,21 +37,8 @@ public sealed class CatJumpLink : MonoBehaviour
         new Keyframe(1f, 0f));
 
     private Transform m_CatTrans;
+    private SphereCollider m_SphereCollider;
     
-
-    /// <summary>判断角色是否处于该连接的触发范围。</summary>
-    public bool IsInActivationRange(Vector3 characterPosition, Vector3 characterUp)
-    {
-        characterUp.Normalize();
-
-        Vector3 offset = characterPosition - transform.position;
-        float verticalDistance = Mathf.Abs(Vector3.Dot(offset, characterUp));
-        Vector3 planarOffset = Vector3.ProjectOnPlane(offset, characterUp);
-
-        return verticalDistance <= MaxActivationHeight &&
-               planarOffset.sqrMagnitude <= ActivationRadius * ActivationRadius;
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         var cat = other.GetComponentInParent<CatCharacter>();
@@ -84,6 +72,14 @@ public sealed class CatJumpLink : MonoBehaviour
         return dot >= MinApproachDot;
     }
 
+    public bool IsInSamePlane(Vector3 characterPosition, Vector3 characterUp)
+    {
+        characterUp.Normalize();
+        Vector3 offset = characterPosition - transform.position;
+        float heightDifference = Mathf.Abs(Vector3.Dot(offset, characterUp));
+        return heightDifference <= MinHeightDifference;
+    }
+
     /// <summary>
     /// 根据归一化时间计算跳跃轨迹上的世界坐标。
     /// startPosition 应为跳跃开始时的 KCC 根节点位置。
@@ -95,13 +91,21 @@ public sealed class CatJumpLink : MonoBehaviour
         float height = HeightCurve.Evaluate(t) * ArcHeight;
         return basePosition + characterUp.normalized * height;
     }
+    
+    /// <summary>根据实际起跳位置计算跳跃时长。</summary>
+    public float EvaluateDuration(Vector3 startPosition,CatMovementProfile catConfig)
+    {
+        var distance = (transform.position - startPosition).magnitude;
+        print($"distance:{distance}");
+        var duration = Mathf.Clamp(distance / catConfig.JumpSpeed, catConfig.JumpMinDuration, catConfig.JumpMaxDuration);
+        print($"duration:{duration}");
+        return duration;
+    }
 
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, ActivationRadius);
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, 0.15f);
+        // Gizmos.color = Color.yellow;
+        // Gizmos.DrawWireSphere(transform.position, ActivationRadius);
         if (m_CatTrans == null) return;
         Vector3 previewStart = m_CatTrans.position;
         Vector3 up = m_CatTrans.up.normalized;
@@ -134,17 +138,23 @@ public sealed class CatJumpLink : MonoBehaviour
 
     private void OnValidate()
     {
-        Duration = Mathf.Max(0.1f, Duration);
         ArcHeight = Mathf.Max(0f, ArcHeight);
         ActivationRadius = Mathf.Max(0.1f, ActivationRadius);
         MaxActivationHeight = Mathf.Max(0f, MaxActivationHeight);
 
         if (HeightCurve == null || HeightCurve.length == 0)
         {
-            HeightCurve = new AnimationCurve(
-                new Keyframe(0f, 0f),
-                new Keyframe(0.5f, 1f),
-                new Keyframe(1f, 0f));
+            HeightCurve = new AnimationCurve(new Keyframe(0f, 0f), new Keyframe(0.5f, 1f), new Keyframe(1f, 0f));
+        }
+
+        if (m_SphereCollider == null)
+        {
+            m_SphereCollider = GetComponent<SphereCollider>();
+        }
+
+        if (m_SphereCollider != null)
+        {
+            m_SphereCollider.radius = ActivationRadius;
         }
     }
     

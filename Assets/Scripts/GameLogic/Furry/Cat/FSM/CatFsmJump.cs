@@ -7,6 +7,7 @@ public class CatFsmJump : CatFsmBase
     private Vector3 m_JumpUp;
     private float m_ElapsedTime;
     private float m_JumpChargeTimer;
+    private float m_Duration;
     private bool m_IsFinished;
     private bool m_StartJump;
 
@@ -20,6 +21,11 @@ public class CatFsmJump : CatFsmBase
         base.OnEnter(fromState, enterArg);
 
         m_JumpLink = enterArg as CatJumpLink;
+        if (m_JumpLink == null)
+        {
+            SwitchState(CurState,CatFSM.State.Locomotion);
+            return;
+        }
         m_ElapsedTime = 0f;
         m_IsFinished = m_JumpLink == null;
 
@@ -34,6 +40,7 @@ public class CatFsmJump : CatFsmBase
         m_JumpUp = cat.motor.CharacterUp.normalized;
         
         cat.animancer.SwitchAnimation("Jump");
+        m_Duration = m_JumpLink.EvaluateDuration(m_StartPosition,cat.moveConfig);
     }
 
     public override void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)
@@ -59,22 +66,16 @@ public class CatFsmJump : CatFsmBase
         {
             // 防止 KCC 在起跳的第一帧继续吸附在地面上。
             cat.motor.ForceUnground();
-            // 保持移动碰撞开启
-            cat.motor.SetMovementCollisionsSolvingActivation(false);
             m_StartJump = true;
         }
+        
+        m_ElapsedTime = Mathf.Min(m_ElapsedTime + deltaTime, m_Duration);
 
-        float duration = Mathf.Max(m_JumpLink.Duration, 0.1f);
-        m_ElapsedTime = Mathf.Min(m_ElapsedTime + deltaTime, duration);
-
-        float normalizedTime = m_ElapsedTime / duration;
-        Vector3 targetPosition =
-            m_JumpLink.EvaluatePosition(m_StartPosition, m_JumpUp, normalizedTime);
+        float normalizedTime = m_ElapsedTime / m_Duration;
+        Vector3 targetPosition = m_JumpLink.EvaluatePosition(m_StartPosition, m_JumpUp, normalizedTime);
 
         // KCC 会在本次模拟中用该速度移动到曲线的下一个采样点。
-        currentVelocity =
-            (targetPosition - cat.motor.TransientPosition) /
-            Mathf.Max(deltaTime, 0.0001f);
+        currentVelocity = (targetPosition - cat.motor.TransientPosition) / Mathf.Max(deltaTime, 0.0001f);
 
         if (normalizedTime >= 1f)
         {
@@ -123,7 +124,6 @@ public class CatFsmJump : CatFsmBase
     public override void OnExit()
     {
         base.OnExit();
-        cat.motor.SetMovementCollisionsSolvingActivation(true);
         m_JumpLink = null;
         m_ElapsedTime = 0f;
         m_JumpChargeTimer = 0f;
