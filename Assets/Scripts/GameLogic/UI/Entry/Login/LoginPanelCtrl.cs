@@ -1,23 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class LoginPanelCtrl : MonoBehaviour
 {
-    public Button m_LoginBtn;
+    public Button m_CreateRoomBtn;
+    public Button m_JoinRoomBtn;
+
     void Start()
     {
-        if (m_LoginBtn != null)
-        {
-            m_LoginBtn.onClick.AddListener(OnLoginBtnClick);
-        }
+        UIUtils.ButtonBindListener(m_CreateRoomBtn,OnCreateRoom);
+        UIUtils.ButtonBindListener(m_JoinRoomBtn,OnJoinRoom);
     }
 
-    private void OnLoginBtnClick()
+    private void OnCreateRoom()
     {
-        var msg = NetworkMsg.Get<C2S_JoinRequest>();
-        GameNet.SendS(msg);
+        StartHost();
     }
-    
+
+    private void OnJoinRoom()
+    {
+        StartClient();
+    }
+
+    private void StartHost()
+    {
+        GameRoot.Instance.GameNet.StartHost();
+        GameRoot.Instance.GameNet.LoadScene(SceneDefine.GameScene);
+    }
+
+    private void StartClient()
+    {
+        GameRoot.Instance.GameNet.StartClient();
+        GameRoot.Instance.GameNet.LoadScene(SceneDefine.GameScene);
+    }
 }

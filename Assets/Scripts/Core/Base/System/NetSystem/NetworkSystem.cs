@@ -1,55 +1,64 @@
 using System;
-using UnityEngine;
+using System.Collections.Generic;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
-[Serializable]
 public class NetworkSystem : LogicSystem
 {
-    public NetworkConfig Config;
-    private NetSession m_NetSession;
-    [HideInInspector] 
-    public int ConnectionId;
-    public override void OnInit()
-    {
-        base.OnInit();
-        
-#if UNITY_SERVER
-        m_NetSession = new ServerSession();
-#else
-        m_NetSession = new ClientSession();
-#endif
-    }
+    public bool IsServer => NetworkManager.Singleton.IsServer;
+    private readonly NetworkManager m_NetMgr = NetworkManager.Singleton;
+    public Action<string,IReadOnlyList<ulong>> LoadCompleted;
+    public Action<ulong> ClientConnected;
 
     public override void OnAfterAllSystemInit()
     {
         base.OnAfterAllSystemInit();
-        m_NetSession.Init();
+        m_NetMgr.SceneManager.OnLoadComplete += (id, name, mode) =>
+        {
+            LoadCompleted?.Invoke(name,m_NetMgr.ConnectedClientsIds);
+        };
+
+        m_NetMgr.OnClientConnectedCallback += clientId =>
+        {
+            ClientConnected?.Invoke(clientId);
+        };
     }
 
-    public override void OnUpdate(float deltaTime)
+    public bool StartHost(ushort port = 7777)
     {
-        base.OnUpdate(deltaTime);
-        m_NetSession.Poll();
+        if (m_NetMgr == null)
+        {
+            return false;
+        }
+
+        return m_NetMgr.StartHost();
+    }
+
+    public bool StartClient(string address = "127.0.0.1", ushort port = 7777)
+    {
+        if (m_NetMgr == null)
+        {
+            return false;
+        }
+
+        return m_NetMgr.StartClient();
+    }
+
+    public void LoadScene(string sceneName)
+    {
+        if (m_NetMgr == null)
+        {
+            return;
+        }
+        m_NetMgr.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
 
     public override void OnDispose()
     {
         base.OnDispose();
-        m_NetSession.Dispose();
-        ConnectionId = 0;
-    }
-
-    public void Send(NetworkMsg msg)
-    {
-        m_NetSession?.Send(msg);
-    }
-
-    public void Send(long connectionId, NetworkMsg msg)
-    {
-        m_NetSession?.Send(connectionId,msg);
-    }
-    
-    public void Broadcast(NetworkMsg msg)
-    {
-        m_NetSession?.Broadcast(msg);
+        if (m_NetMgr != null)
+        {
+            m_NetMgr.Shutdown();
+        }
     }
 }
