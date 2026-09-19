@@ -57,9 +57,9 @@ GameObject:
   - component: {fileID: 7587426130373732836}
   - component: {fileID: 7461126837410406185}
   - component: {fileID: 6456134436247416974}
+  - component: {fileID: 1754972271311178593}
   - component: {fileID: 8142067962061993165}
   - component: {fileID: 6389631952048776755}
-  - component: {fileID: 1754972271311178593}
   - component: {fileID: 4213957499542924934}
   m_Layer: 8
   m_Name: Cat
@@ -151,6 +151,26 @@ MonoBehaviour:
   CheckMovementInitialOverlaps: 1
   KillVelocityWhenExceedMaxMovementIterations: 1
   KillRemainingMovementWhenExceedMaxMovementIterations: 1
+--- !u!114 &1754972271311178593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7954109546263882847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2606481097
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &8142067962061993165
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,6 +187,7 @@ MonoBehaviour:
   moveConfig: {fileID: 11400000, guid: 29869d15596a2194b9eb4be446b2d213, type: 2}
   jumpScanner: {fileID: 6389631952048776755}
   camFollowPoint: {fileID: 3448660960967702447}
+  followCam: {fileID: 0}
   catCam: {fileID: 0}
   motor: {fileID: 6456134436247416974}
   enableLocalPredict: 0
@@ -194,26 +215,6 @@ MonoBehaviour:
   directionWeight: 2
   distanceWeight: 1
   heightWeight: 0.5
---- !u!114 &1754972271311178593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7954109546263882847}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1776266261
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
 --- !u!114 &4213957499542924934
 MonoBehaviour:
   m_ObjectHideFlags: 0
