@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.community.netcode.transport.steamnetworkingsockets": {
+      "version": "https://github.com/Unity-Technologies/multiplayer-community-contributions.git?path=/Transports/com.community.netcode.transport.steamnetworkingsockets",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0fab638470379ace12b0149dfb41c043d23dbce5"
+    },
     "com.cysharp.unitask": {
       "version": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
       "depth": 0,
@@ -20,6 +27,13 @@
       "depth": 0,
       "source": "local-tarball",
       "dependencies": {}
+    },
+    "com.rlabrecque.steamworks.net": {
+      "version": "https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ba71581f1ed7349e8d0f17ddc6f135dd3bc8a6a3"
     },
     "com.unity.ai.navigation": {
       "version": "1.1.7",

@@ -2,6 +2,7 @@ using System;
 
 public class LogicSystem : ISystem
 {
+    protected virtual string SystemTag { get; set;} 
     public virtual void OnInit()
     {
         

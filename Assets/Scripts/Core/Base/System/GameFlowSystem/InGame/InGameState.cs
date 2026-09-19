@@ -6,7 +6,7 @@ public sealed class InGameState : GameFlowState
 
     public override void Enter()
     {
-        Network.ClientConnected += OnClientConnected;
+        Network.OnClientConnected += OnClientConnected;
         // Network.ClientDisconnected += OnClientDisconnected;
         // if (sceneName != SceneDefine.GameScene)
         //     return;
@@ -34,7 +34,7 @@ public sealed class InGameState : GameFlowState
 
     public override void Exit()
     {
-        Network.ClientConnected -= OnClientConnected;
+        Network.OnClientConnected -= OnClientConnected;
         // Network.ClientDisconnected -= OnClientDisconnected;
     }
 }

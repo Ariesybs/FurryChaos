@@ -27,6 +27,13 @@ public static class Log
     }
     
     [HideInCallstack]
+    public static void Info(string tag, string msg)
+    {
+        var log = GameRoot.Instance.GetSystem<LogSystem>();
+        log?.Info($"[{tag}] {msg}");
+    }
+    
+    [HideInCallstack]
     public static void Warning(
         string msg,
         [CallerFilePath] string filePath = "",
@@ -46,6 +53,13 @@ public static class Log
     {
         var log = GameRoot.Instance.GetSystem<LogSystem>();
         log?.Error(msg, filePath, lineNumber, memberName);
+    }
+    
+    [HideInCallstack]
+    public static void Error(string tag, string msg)
+    {
+        var log = GameRoot.Instance.GetSystem<LogSystem>();
+        log?.Error($"[{tag}] {msg}");
     }
     
     [HideInCallstack]

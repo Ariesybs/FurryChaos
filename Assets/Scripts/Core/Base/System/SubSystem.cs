@@ -1,36 +1,38 @@
 public class SubSystem : ISystem
 {
-    public void OnInit()
+    protected virtual bool IsInitialized { get; set; }
+    protected virtual string SystemTag { set; get; }
+    public virtual void OnInit()
     {
         
     }
 
-    public void OnAfterAllSystemInit()
+    public virtual void OnAfterAllSystemInit()
     {
         
     }
 
-    public void OnUpdate(float deltaTime)
+    public virtual void OnUpdate(float deltaTime)
     {
         
     }
 
-    public void OnFixedUpdate(float deltaTime)
+    public virtual void OnFixedUpdate(float deltaTime)
     {
         
     }
 
-    public void OnPause()
+    public virtual void OnPause()
     {
         
     }
 
-    public void OnResume()
+    public virtual void OnResume()
     {
         
     }
 
-    public void OnDispose()
+    public virtual void OnDispose()
     {
         
     }

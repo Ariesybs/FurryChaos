@@ -1,7 +1,9 @@
 {
   "dependencies": {
+    "com.community.netcode.transport.steamnetworkingsockets": "https://github.com/Unity-Technologies/multiplayer-community-contributions.git?path=/Transports/com.community.netcode.transport.steamnetworkingsockets",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.kyrylokuzyk.primetween": "file:../Assets/Plugins/PrimeTween/internal/com.kyrylokuzyk.primetween.tgz",
+    "com.rlabrecque.steamworks.net": "https://github.com/rlabrecque/Steamworks.NET.git?path=/com.rlabrecque.steamworks.net",
     "com.unity.ai.navigation": "1.1.7",
     "com.unity.animation.rigging": "1.2.1",
     "com.unity.cinemachine": "2.9.7",

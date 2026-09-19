@@ -15,7 +15,6 @@ public class GameFlowSystem : LogicSystem
 
     public override void OnInit()
     {
-        base.OnInit();
         this.LoginSystem = new LoginSystem();
         this.LobbySystem = new LobbySystem();
         this.LoadingSystem = new LoadingSystem();
@@ -26,14 +25,13 @@ public class GameFlowSystem : LogicSystem
         LoadingSystem.OnInit();
         InGameSystem.OnInit();
         ResultSystem.OnInit();
-        
+        base.OnInit();
         ChangeState(new BootState(this));
     }
 
     public override void OnAfterAllSystemInit()
     {
         m_Network = GameRoot.Instance.GameNet;
-
     }
     
     public override void OnUpdate(float deltaTime)
