@@ -1,55 +1,92 @@
 using System;
-using UnityEngine;
+using System.Collections.Generic;
+using Netcode.Transports;
+using Steamworks;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
-[Serializable]
 public class NetworkSystem : LogicSystem
 {
-    public NetworkConfig Config;
-    private NetSession m_NetSession;
-    [HideInInspector] 
-    public int ConnectionId;
-    public override void OnInit()
-    {
-        base.OnInit();
-        
-#if UNITY_SERVER
-        m_NetSession = new ServerSession();
-#else
-        m_NetSession = new ClientSession();
-#endif
-    }
+    protected override string SystemTag => "NetSystem";
+    public bool IsServer => NetworkManager.Singleton.IsServer;
+    public bool IsNetworkRunning  => m_NetMgr != null && m_NetMgr.IsListening; // 服务是否正在运行
+    private readonly NetworkManager m_NetMgr = NetworkManager.Singleton;
+    private SteamNetworkingSocketsTransport m_Transport => m_NetMgr.NetworkConfig.NetworkTransport as SteamNetworkingSocketsTransport;
+    public event Action<string,IReadOnlyList<ulong>> LoadCompleted;
+    public event Action<ulong> OnClientConnected;
+    public event Action<ulong> OnClientDisconnected;
 
     public override void OnAfterAllSystemInit()
     {
         base.OnAfterAllSystemInit();
-        m_NetSession.Init();
+
+        m_NetMgr.OnClientConnectedCallback += clientId =>
+        {
+            OnClientConnected?.Invoke(clientId);
+        };
+
+        m_NetMgr.OnClientDisconnectCallback += clientId =>
+        {
+            OnClientDisconnected?.Invoke(clientId);
+        };
     }
 
-    public override void OnUpdate(float deltaTime)
+    public bool StartHost()
     {
-        base.OnUpdate(deltaTime);
-        m_NetSession.Poll();
+        if (m_NetMgr == null || m_Transport == null)
+        {
+            return false;
+        }
+        var hostSteamId = SteamUser.GetSteamID().m_SteamID;
+        Log.Info(SystemTag,$"Host Steam ID {hostSteamId}");
+        SteamNetworkingUtils.InitRelayNetworkAccess();
+        var isOk = m_NetMgr.StartHost();
+        if (isOk)
+        {
+            m_NetMgr.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
+        }
+        return isOk;
+    }
+    public bool StartClient(ulong hostSteamId = 0)
+    {
+        if (m_NetMgr == null || m_Transport == null)
+        {
+            return false;
+        }
+
+        if (hostSteamId != 0)
+        {
+            m_Transport.ConnectToSteamID = hostSteamId;
+        }
+        SteamNetworkingUtils.InitRelayNetworkAccess();
+
+        return m_NetMgr.StartClient();
+    }
+
+    public void LoadScene(string sceneName)
+    {
+        if (m_NetMgr == null)
+        {
+            return;
+        }
+        m_NetMgr.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
+    }
+    
+    private void OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        LoadCompleted?.Invoke(sceneName, clientsCompleted);
     }
 
     public override void OnDispose()
     {
         base.OnDispose();
-        m_NetSession.Dispose();
-        ConnectionId = 0;
-    }
-
-    public void Send(NetworkMsg msg)
-    {
-        m_NetSession?.Send(msg);
-    }
-
-    public void Send(long connectionId, NetworkMsg msg)
-    {
-        m_NetSession?.Send(connectionId,msg);
-    }
-    
-    public void Broadcast(NetworkMsg msg)
-    {
-        m_NetSession?.Broadcast(msg);
+        if (m_NetMgr.SceneManager != null)
+        {
+            m_NetMgr.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted; 
+        }
+        if (m_NetMgr != null)
+        {
+            m_NetMgr.Shutdown();
+        }
     }
 }

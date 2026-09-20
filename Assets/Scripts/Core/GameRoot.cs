@@ -10,13 +10,12 @@ public class GameRoot : MonoBehaviour
     #region 游戏系统
 
     public LogSystem GameLog; // 日志系统
+    public SdkSystem GameSkd; // SDK系统
+    public GameFlowSystem GameFlow; // 流程系统
     public MsgSystem GameMsg; // 事件系统
     public TimeSystem GameTimer; // 计时系统
-    [Header("网络系统")]
     public NetworkSystem GameNet; // 网络系统
-
     public LoadSystem GameLoader; // 载入系统
-    public PlayerSystem GamePlayer;
     #endregion
     
     private readonly Dictionary<Type, ISystem> m_GameSystems = new();
@@ -46,11 +45,12 @@ public class GameRoot : MonoBehaviour
 #else
         GameLog = RegisterSystem(new LogSystem());
 #endif
+        GameSkd = RegisterSystem(new SdkSystem());
+        GameNet = RegisterSystem(new NetworkSystem());
+        GameFlow = RegisterSystem(new GameFlowSystem());
         GameMsg = RegisterSystem(new MsgSystem());
         GameTimer = RegisterSystem(new TimeSystem());
-        GameNet = RegisterSystem(new NetworkSystem());
         GameLoader = RegisterSystem(new LoadSystem());
-        GamePlayer = RegisterSystem(new PlayerSystem());
     }
     private void InitializeSystems()
     {

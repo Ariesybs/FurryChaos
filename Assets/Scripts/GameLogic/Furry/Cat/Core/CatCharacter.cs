@@ -1,8 +1,11 @@
 using System;
-using Animancer;using KinematicCharacterController;
+using Animancer;
+using Cinemachine;
+using KinematicCharacterController;
+using Unity.Netcode;
 using UnityEngine;
 
-public sealed class CatCharacter : MonoBehaviour , ICharacterController
+public sealed class CatCharacter : NetworkBehaviour , ICharacterController
 {
     public enum CatAnimationState : byte
     {
@@ -25,6 +28,9 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
     // 跳跃扫描
     public CatJumpScanner jumpScanner;
     // 相机
+    [Header("相机")]
+    public Transform camFollowPoint;
+    public GameObject followCam;
     [HideInInspector]
     public Camera catCam;
     public KinematicCharacterMotor motor;
@@ -33,8 +39,10 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
     [Header("Debug")]
     public bool enableLocalPredict;
 
+    public bool localMove = true;
+
     private CatNetworkEntity m_Entity;
-    private CatSyncSystem m_SyncSystem;
+    private uint m_InputSequence;
     private void Awake()
     {
         motor.CharacterController = this;
@@ -43,12 +51,11 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
         input = new CatInput();
         catCam = Camera.main;
         m_Entity = GetComponent<CatNetworkEntity>();
-        m_SyncSystem = GameRoot.Instance.GamePlayer.GameCatSyncSystem;
     }
 
     private void Start()
     {
-        if (m_Entity == null || m_Entity.Role == CatNetworkRole.LocalPlayer)
+        if (m_Entity == null || m_Entity.CanReadLocalInput)
         {
             input.LockCursor(true);
         }
@@ -58,26 +65,41 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
     {
         catFsm?.OnUpdate();
 
+        if (m_Entity != null && !m_Entity.CanReadLocalInput)
+        {
+            return;
+        }
+
         var cmd = input.ReadCmd();
         if (catCam != null)
         {
             cmd.CameraYaw = catCam.transform.eulerAngles.y;
         }
-        if (m_SyncSystem != null)
+        cmd.Sequence = ++m_InputSequence;
+        if (m_Entity != null)
         {
-            m_SyncSystem.SubmitLocalInput(m_Entity.EntityId,cmd);
+            cmd.ClientTick = m_Entity.CurrentNetworkTick;
+            m_Entity.SubmitLocalInput(cmd);
+        }
+        else if (localMove)
+        {
+            ApplyInput(cmd);
         }
     }
-    
-    
+
+    public void ApplyNetworkInput(InputCmd command)
+    {
+        catFsm?.OnInput(command);
+    }
+
     private void ApplyInput(InputCmd command)
     {
         if (!enableLocalPredict)
         {
             return;
         }
-        // 本地运行
-        catFsm?.OnInput(command);
+
+        ApplyNetworkInput(command);
     }
 
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime)
@@ -130,5 +152,25 @@ public sealed class CatCharacter : MonoBehaviour , ICharacterController
     public void OnDiscreteCollisionDetected(Collider hitCollider)
     {
         catFsm.GetCurrentFsm()?.OnDiscreteCollisionDetected(hitCollider);
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        var followCamObj = Instantiate(followCam);
+        if (followCamObj != null)
+        {
+            var c = followCamObj.GetComponent<CinemachineFreeLook>();
+            if (c != null)
+            {
+                c.Follow = camFollowPoint;
+                c.LookAt = camFollowPoint;
+            }
+        }
+    }
+
+    public Transform GetCamFollowPoint()
+    {
+        return camFollowPoint;
     }
 }

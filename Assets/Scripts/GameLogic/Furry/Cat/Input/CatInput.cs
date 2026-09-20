@@ -1,4 +1,5 @@
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
 public class CatInput
@@ -57,7 +58,7 @@ public enum InputAction : byte
     Run = 1 << 4,
 }
 
-public struct InputCmd
+public struct InputCmd : INetworkSerializable
 {
     public uint Sequence;
     public uint ClientTick;
@@ -77,21 +78,30 @@ public struct InputCmd
         return (HeldActions & action) != 0;
     }
 
-    public static InputCmd GetCmdFromClientMsg(C2S_CatInputRequest msg)
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer)
+        where T : IReaderWriter
     {
-        return new InputCmd()
+        serializer.SerializeValue(ref Sequence);
+        serializer.SerializeValue(ref ClientTick);
+        serializer.SerializeValue(ref Direction);
+        serializer.SerializeValue(ref CameraYaw);
+
+        byte pressedActions = (byte)PressedActions;
+        byte heldActions = (byte)HeldActions;
+        serializer.SerializeValue(ref pressedActions);
+        serializer.SerializeValue(ref heldActions);
+
+        if (serializer.IsReader)
         {
-            Sequence = msg.Sequence,
-            ClientTick = msg.ClientTick,
-            Direction = msg.Direction,
-            CameraYaw = msg.CameraYaw,
-            PressedActions = (InputAction)msg.PressedActions,
-            HeldActions = (InputAction)msg.HeldActions,
-        };
-    } 
+            PressedActions = (InputAction)pressedActions;
+            HeldActions = (InputAction)heldActions;
+        }
+    }
 
     public bool IsEmpty()
     {
-        return Direction == Vector2.zero && PressedActions == InputAction.None;;
+        return Direction == Vector2.zero &&
+               PressedActions == InputAction.None &&
+               HeldActions == InputAction.None;
     }
 }
