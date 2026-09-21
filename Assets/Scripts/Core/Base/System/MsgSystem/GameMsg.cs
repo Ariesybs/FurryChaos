@@ -1,6 +1,6 @@
 using System;
 
-public static class GameMsg
+public static class GameEvent
 {
     public static void Register<T>(Action<T> handler) where T : struct, IMsg
     {

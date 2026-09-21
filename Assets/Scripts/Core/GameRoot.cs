@@ -16,6 +16,7 @@ public class GameRoot : MonoBehaviour
     public TimeSystem GameTimer; // 计时系统
     public NetworkSystem GameNet; // 网络系统
     public LoadSystem GameLoader; // 载入系统
+    public UISystem GameUI; // UI系统
     #endregion
     
     private readonly Dictionary<Type, ISystem> m_GameSystems = new();
@@ -51,6 +52,7 @@ public class GameRoot : MonoBehaviour
         GameMsg = RegisterSystem(new MsgSystem());
         GameTimer = RegisterSystem(new TimeSystem());
         GameLoader = RegisterSystem(new LoadSystem());
+        GameUI = RegisterSystem(new UISystem());
     }
     private void InitializeSystems()
     {

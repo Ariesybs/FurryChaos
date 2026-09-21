@@ -33,7 +33,7 @@ public sealed class UIHoverScale : MonoBehaviour, IPointerEnterHandler, IPointer
         float full = Mathf.Abs(m_OriginScale.x * m_HoverScale - m_OriginScale.x);
         float remain = Mathf.Abs(transform.localScale.x - target.x);
         float duration = full > 0.0001f ? m_Duration * (remain / full) : 0f;
-        m_Tween = Tween.Scale(transform, target, duration, Ease.OutQuad);
+        m_Tween = Tween.Scale(transform, target, duration, m_Ease);
     }
 
     private void OnDisable()
