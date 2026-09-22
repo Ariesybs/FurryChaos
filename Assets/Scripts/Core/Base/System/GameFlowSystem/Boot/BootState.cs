@@ -7,4 +7,10 @@ public class BootState : GameFlowState
     {
         
     }
+
+    public override void OnEnter()
+    {
+        base.OnEnter();
+        Flow.ChangeState(new MainMenuState(Flow));
+    }
 }

@@ -1,6 +1,10 @@
 using Steamworks;
 public class SteamSdk : SubSystem
 {
+    public SteamSdk(ISystem mainSystem) : base(mainSystem)
+    {
+    }
+
     public override void OnInit()
     {
         base.OnInit();

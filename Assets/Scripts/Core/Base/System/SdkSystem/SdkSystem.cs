@@ -5,7 +5,7 @@ public class SdkSystem : LogicSystem
     public override void OnInit()
     {
         base.OnInit();
-        SteamSdk = new SteamSdk();
+        SteamSdk = new SteamSdk(this);
         SteamSdk.OnInit();
     }
 

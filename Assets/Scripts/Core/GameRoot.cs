@@ -14,6 +14,7 @@ public class GameRoot : MonoBehaviour
     public GameFlowSystem GameFlow; // 流程系统
     public MsgSystem GameMsg; // 事件系统
     public TimeSystem GameTimer; // 计时系统
+    [Header("网络系统")]
     public NetworkSystem GameNet; // 网络系统
     public LoadSystem GameLoader; // 载入系统
     public UISystem GameUI; // UI系统
@@ -47,12 +48,12 @@ public class GameRoot : MonoBehaviour
         GameLog = RegisterSystem(new LogSystem());
 #endif
         GameSkd = RegisterSystem(new SdkSystem());
-        GameNet = RegisterSystem(new NetworkSystem());
+        GameUI = RegisterSystem(new UISystem());
+        GameNet = RegisterSystem(GameNet);
         GameFlow = RegisterSystem(new GameFlowSystem());
         GameMsg = RegisterSystem(new MsgSystem());
         GameTimer = RegisterSystem(new TimeSystem());
         GameLoader = RegisterSystem(new LoadSystem());
-        GameUI = RegisterSystem(new UISystem());
     }
     private void InitializeSystems()
     {

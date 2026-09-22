@@ -14,7 +14,7 @@ public struct UIMainMenuSelectOptMsg : IMsg
 
     public OptType type;
 }
-public class UIPopMaskCtrl : UIPanel
+public class UIMainMenuCtrl : UIPanel
 {
     public override UIDisplayMode DisplayMode => UIDisplayMode.FullScreen;
 
@@ -42,7 +42,7 @@ public class UIPopMaskCtrl : UIPanel
 
     private void OnCreateRoomClick()
     {
-        
+        GameRoot.Instance.GameFlow.LobbySystem.CreateRoom(4);
     }
 
     private void OnJoinRoomClick()

@@ -1,5 +1,9 @@
 public class InGameSystem : SubSystem
 {
+    public InGameSystem(ISystem mainSystem) : base(mainSystem)
+    {
+    }
+
     public void SpawnPlayer(ulong clientId)
     {
         // 查找出生点

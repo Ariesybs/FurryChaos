@@ -1,6 +1,6 @@
 public interface IGameFlowState
 {
-    void Enter();
-    void Update(float deltaTime);
-    void Exit();
+    void OnEnter();
+    void OnUpdate(float deltaTime);
+    void OnExit();
 }

@@ -2,6 +2,11 @@ public class SubSystem : ISystem
 {
     protected virtual bool IsInitialized { get; set; }
     protected virtual string SystemTag { set; get; }
+    protected ISystem MainSystem;
+    public SubSystem(ISystem mainSystem)
+    {
+        MainSystem = mainSystem;
+    }
     public virtual void OnInit()
     {
         

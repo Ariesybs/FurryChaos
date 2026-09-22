@@ -4,6 +4,14 @@ public sealed class LobbyState : GameFlowState
     {
     }
 
+    public override void OnEnter()
+    {
+        base.OnEnter();
+        // 生成组队面板
+        UIMgr.Open<UILobbyCtrl>();
+        // 生成组队场景
+    }
+
     public void StartGame()
     {
         if (!Network.IsServer)

@@ -1,11 +1,13 @@
 public sealed class InGameState : GameFlowState
 {
+    private UIMainInGameCtrl InGamePanel;
     public InGameState(GameFlowSystem flow) : base(flow)
     {
     }
 
-    public override void Enter()
+    public override void OnEnter()
     {
+        InGamePanel = UIMgr.Open<UIMainInGameCtrl>();
         Network.OnClientConnected += OnClientConnected;
         // Network.ClientDisconnected += OnClientDisconnected;
         // if (sceneName != SceneDefine.GameScene)
@@ -32,7 +34,7 @@ public sealed class InGameState : GameFlowState
         // 更新玩家列表或检测房主退出
     }
 
-    public override void Exit()
+    public override void OnExit()
     {
         Network.OnClientConnected -= OnClientConnected;
         // Network.ClientDisconnected -= OnClientDisconnected;

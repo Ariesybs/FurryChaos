@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class SteamLobby : LobbySystem
 {
+    public SteamLobby(ISystem mainSystem) : base(mainSystem)
+    {
+    }
+
     protected override string SystemTag => "SteamLobby";
     public CSteamID CurrentLobbyId { get; private set; }
     public bool HasLobby => CurrentLobbyId.IsValid();
@@ -131,6 +135,11 @@ public class SteamLobby : LobbySystem
             Log.Info(SystemTag,$"离开房间:{CurrentLobbyId}");
             CurrentLobbyId = default;
         }
+    }
+
+    public override void StartGame()
+    {
+        
     }
 
     public void OpenInvitePanel()

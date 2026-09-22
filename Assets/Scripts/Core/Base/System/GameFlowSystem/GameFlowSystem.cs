@@ -6,7 +6,6 @@ public class GameFlowSystem : LogicSystem
     private GameFlowState m_State;
     public LoginSystem LoginSystem;
     public LobbySystem LobbySystem;
-    public LoadingSystem LoadingSystem;
     public InGameSystem InGameSystem;
     public ResultSystem ResultSystem;
     
@@ -16,14 +15,12 @@ public class GameFlowSystem : LogicSystem
     public override void OnInit()
     {
         
-        this.LoginSystem = new LoginSystem();
-        this.LobbySystem = LobbySystem.Get();
-        this.LoadingSystem = new LoadingSystem();
-        this.InGameSystem = new InGameSystem();
-        this.ResultSystem = new ResultSystem();
+        this.LoginSystem = new LoginSystem(this);
+        this.LobbySystem = LobbySystem.Get(this);
+        this.InGameSystem = new InGameSystem(this);
+        this.ResultSystem = new ResultSystem(this);
         LoginSystem.OnInit();
         LobbySystem.OnInit();
-        LoadingSystem.OnInit();
         InGameSystem.OnInit();
         ResultSystem.OnInit();
         base.OnInit();
@@ -38,7 +35,7 @@ public class GameFlowSystem : LogicSystem
     public override void OnUpdate(float deltaTime)
     {
         base.OnUpdate(deltaTime);
-        m_CurrentState?.Update(deltaTime);
+        m_CurrentState?.OnUpdate(deltaTime);
     }
     
     public void ChangeState(IGameFlowState nextState)
@@ -47,9 +44,10 @@ public class GameFlowSystem : LogicSystem
         {
             return;
         }
-        m_CurrentState?.Exit();
+        Log.Info("GameFlowSystem",$"Enter {nextState}");
+        m_CurrentState?.OnExit();
         m_CurrentState = nextState;
-        m_CurrentState.Enter();
+        m_CurrentState.OnEnter();
     }
     
     

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -353,7 +353,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 845737784}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -412,7 +412,7 @@ MonoBehaviour:
       - {fileID: 11400000, guid: 3e85ccbb62f11544387ed307fe425bc3, type: 2}
     TickRate: 30
     ClientConnectionBufferTimeout: 10
-    ConnectionApproval: 1
+    ConnectionApproval: 0
     ConnectionData: 
     EnableTimeResync: 0
     TimeResyncInterval: 30
@@ -737,7 +737,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1349014871}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -824,8 +824,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameNet:
     m_TransportMode: 0
-    m_SteamTransport: {fileID: 0}
-    m_UnityTransport: {fileID: 0}
+    m_SteamTransport: {fileID: 845737786}
+    m_UnityTransport: {fileID: 1349014872}
 --- !u!4 &1676678637
 Transform:
   m_ObjectHideFlags: 0
@@ -960,11 +960,14 @@ MonoBehaviour:
   m_PopupRoot: {fileID: 1978970172}
   m_Mask: {fileID: 1540359223}
   m_MaskButton: {fileID: 1248896172}
-  m_DefaultPanel: {fileID: 4854985350087858056, guid: 7a78a6820c8beb2449a0d28d0c12b942,
-    type: 3}
+  m_DefaultPanel: {fileID: 0}
   m_OpenDefaultOnStart: 1
   m_RegisterPrefabs:
   - {fileID: 8229340468482344332, guid: 6a54dd2b30668d44d94eb81c538a1c9a, type: 3}
+  - {fileID: 4854985350087858056, guid: 7a78a6820c8beb2449a0d28d0c12b942, type: 3}
+  - {fileID: 6793978960882490991, guid: 5f56a0758e2ac5d41b1cf87df94d8735, type: 3}
+  - {fileID: 1636892857780524422, guid: 5fc148d00b7c9ef4980d946296398f42, type: 3}
+  - {fileID: -1881156839420998014, guid: 8e52a1689f1a64c4fb296b4f26ed1e1b, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

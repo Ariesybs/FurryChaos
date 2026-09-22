@@ -9,7 +9,7 @@ public abstract class GameFlowState : IGameFlowState
         Flow = flow;
     }
 
-    public virtual void Enter() { }
-    public virtual void Update(float deltaTime) { }
-    public virtual void Exit() { }
+    public virtual void OnEnter() { }
+    public virtual void OnUpdate(float deltaTime) { }
+    public virtual void OnExit() { }
 }

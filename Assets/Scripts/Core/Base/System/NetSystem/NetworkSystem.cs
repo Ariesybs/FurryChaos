@@ -27,8 +27,9 @@ public class NetworkSystem : LogicSystem
     private SteamNetworkingSocketsTransport m_SteamTransport;
     [SerializeField]
     private UnityTransport m_UnityTransport;
-    private readonly NetworkManager m_NetMgr = NetworkManager.Singleton;
-    private SteamNetworkingSocketsTransport m_Transport => m_NetMgr.NetworkConfig.NetworkTransport as SteamNetworkingSocketsTransport;
+    private NetworkManager m_NetMgr => NetworkManager.Singleton;
+    public event Action<string, float> SceneLoadProgress;
+    public event Action<string> SceneLoadStarted;
     public event Action<string,IReadOnlyList<ulong>> LoadCompleted;
     public event Action<ulong> OnClientConnected;
     public event Action<ulong> OnClientDisconnected;
@@ -49,35 +50,36 @@ public class NetworkSystem : LogicSystem
                 break;
             }
         }
-    }
 
-    public override void OnAfterAllSystemInit()
-    {
-        base.OnAfterAllSystemInit();
-
-        if (m_NetMgr != null && m_NetMgr.IsListening)
+        m_NetMgr.OnServerStarted += () =>
         {
-            m_NetMgr.OnClientConnectedCallback += clientId =>
+            if (IsServer)
             {
-                OnClientConnected?.Invoke(clientId);
-            };
+                if (m_NetMgr != null && m_NetMgr.IsListening)
+                {
+                    m_NetMgr.OnClientConnectedCallback += clientId =>
+                    {
+                        OnClientConnected?.Invoke(clientId);
+                    };
 
-            m_NetMgr.OnClientDisconnectCallback += clientId =>
-            {
-                OnClientDisconnected?.Invoke(clientId);
-            };
-        }
+                    m_NetMgr.OnClientDisconnectCallback += clientId =>
+                    {
+                        OnClientDisconnected?.Invoke(clientId);
+                    };
+            
+                    m_NetMgr.SceneManager.OnSceneEvent += OnSceneEvent;
+                }
+            }
+        };
     }
 
     public bool StartHost()
     {
-        if (m_NetMgr == null || m_Transport == null)
+        if (m_NetMgr == null )
         {
             return false;
         }
-        var hostSteamId = SteamUser.GetSteamID().m_SteamID;
-        Log.Info(SystemTag,$"Host Steam ID {hostSteamId}");
-        SteamNetworkingUtils.InitRelayNetworkAccess();
+        
         var isOk = m_NetMgr.StartHost();
         if (isOk)
         {
@@ -85,18 +87,23 @@ public class NetworkSystem : LogicSystem
         }
         return isOk;
     }
+
+    public void StopHost()
+    {
+        if (m_NetMgr == null )
+        {
+            return;
+        }
+
+        m_NetMgr.Shutdown();
+    }
     public bool StartClient(ulong hostSteamId = 0)
     {
-        if (m_NetMgr == null || m_Transport == null)
+        if (m_NetMgr == null)
         {
             return false;
         }
-
-        if (hostSteamId != 0)
-        {
-            m_Transport.ConnectToSteamID = hostSteamId;
-        }
-        SteamNetworkingUtils.InitRelayNetworkAccess();
+        
 
         return m_NetMgr.StartClient();
     }
@@ -110,6 +117,23 @@ public class NetworkSystem : LogicSystem
         m_NetMgr.SceneManager.LoadScene(sceneName, LoadSceneMode.Single);
     }
     
+    private void OnSceneEvent(SceneEvent sceneEvent)
+    {
+        switch (sceneEvent.SceneEventType)
+        {
+            case SceneEventType.Load:
+                SceneLoadStarted?.Invoke(sceneEvent.SceneName);
+                SceneLoadProgress?.Invoke(sceneEvent.SceneName, 0.1f);
+                break;
+            case SceneEventType.LoadComplete:
+                SceneLoadProgress?.Invoke(sceneEvent.SceneName, 0.7f);
+                break;
+            case SceneEventType.LoadEventCompleted:
+                SceneLoadProgress?.Invoke(sceneEvent.SceneName, 1f);
+                break;
+        }
+    }
+    
     private void OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
     {
         LoadCompleted?.Invoke(sceneName, clientsCompleted);
@@ -121,6 +145,7 @@ public class NetworkSystem : LogicSystem
         if (m_NetMgr != null && m_NetMgr.SceneManager != null)
         {
             m_NetMgr.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted; 
+            m_NetMgr.SceneManager.OnSceneEvent -= OnSceneEvent;
         }
         if (m_NetMgr != null)
         {

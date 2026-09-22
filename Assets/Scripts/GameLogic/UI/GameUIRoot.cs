@@ -154,8 +154,8 @@ public class GameUIRoot : MonoBehaviour
         {
             return;
         }
-
-        Tween.Alpha(m_Mask, 0, 0.25f).OnComplete(() => UIUtils.SetActive(m_Mask,false));
+        if(m_Mask.gameObject.activeSelf)
+            Tween.Alpha(m_Mask, 0, 0.25f).OnComplete(() => UIUtils.SetActive(m_Mask,false));
     }
 
     public void EnsureLayers()
