@@ -15,8 +15,9 @@ public class GameFlowSystem : LogicSystem
 
     public override void OnInit()
     {
+        
         this.LoginSystem = new LoginSystem();
-        this.LobbySystem = new LobbySystem();
+        this.LobbySystem = LobbySystem.Get();
         this.LoadingSystem = new LoadingSystem();
         this.InGameSystem = new InGameSystem();
         this.ResultSystem = new ResultSystem();

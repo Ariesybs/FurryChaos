@@ -23,7 +23,7 @@ public class LoginPanelCtrl : MonoBehaviour
 
     private void OnCreateRoom()
     {
-        lobby.CreateRoom();
+        lobby.CreateRoom(4);
     }
 
     private void OnJoinRoom()
@@ -33,7 +33,7 @@ public class LoginPanelCtrl : MonoBehaviour
 
     private void OnOpenPanel()
     {
-        SteamSdk.OpenInviteDialog(lobby.CurrentLobbyId);
+        
     }
 
     private void OnLeaveRoom()
