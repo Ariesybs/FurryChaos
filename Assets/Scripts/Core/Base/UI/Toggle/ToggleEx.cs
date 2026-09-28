@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class ToggleEx : Toggle
 {
+#if UNITY_EDITOR
     protected override void Reset()
     {
         base.Reset();
@@ -15,4 +16,6 @@ public class ToggleEx : Toggle
         }
         
     }
+#endif
+    
 }

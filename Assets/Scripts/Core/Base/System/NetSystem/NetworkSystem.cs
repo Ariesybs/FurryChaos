@@ -33,6 +33,10 @@ public class NetworkSystem : LogicSystem
     public event Action<string,IReadOnlyList<ulong>> LoadCompleted;
     public event Action<ulong> OnClientConnected;
     public event Action<ulong> OnClientDisconnected;
+    public event Action OnServerStart;
+    public event Action<bool> OnClientStop;
+    public event Action OnClientStart;
+    private List<ulong> ConnectionIds = new();
 
     public override void OnInit()
     {
@@ -50,26 +54,17 @@ public class NetworkSystem : LogicSystem
                 break;
             }
         }
-
-        m_NetMgr.OnServerStarted += () =>
+        
+        m_NetMgr.OnServerStarted += () => OnServerStart?.Invoke();
+        m_NetMgr.OnClientStarted += () => OnClientStart?.Invoke();
+        m_NetMgr.OnClientStopped += (isHost) => OnClientStop?.Invoke(isHost);
+        m_NetMgr.OnClientConnectedCallback += clientId =>
         {
-            if (IsServer)
-            {
-                if (m_NetMgr != null && m_NetMgr.IsListening)
-                {
-                    m_NetMgr.OnClientConnectedCallback += clientId =>
-                    {
-                        OnClientConnected?.Invoke(clientId);
-                    };
-
-                    m_NetMgr.OnClientDisconnectCallback += clientId =>
-                    {
-                        OnClientDisconnected?.Invoke(clientId);
-                    };
-            
-                    m_NetMgr.SceneManager.OnSceneEvent += OnSceneEvent;
-                }
-            }
+            OnClientConnected?.Invoke(clientId);
+        };
+        m_NetMgr.OnClientDisconnectCallback += clientId =>
+        {
+            OnClientDisconnected?.Invoke(clientId);
         };
     }
 
@@ -88,7 +83,7 @@ public class NetworkSystem : LogicSystem
         return isOk;
     }
 
-    public void StopHost()
+    public void Stop()
     {
         if (m_NetMgr == null )
         {
@@ -103,9 +98,12 @@ public class NetworkSystem : LogicSystem
         {
             return false;
         }
-        
-
         return m_NetMgr.StartClient();
+    }
+
+    public List<ulong> GetConnectionIdList()
+    {
+        return (List<ulong>)m_NetMgr.ConnectedClientsIds;
     }
 
     public void LoadScene(string sceneName)

@@ -21,9 +21,7 @@ public class UISystem : LogicSystem
     public override void OnInit()
     {
         base.OnInit();
-#if !UNITY_SERVER
         BindRoot(GameUIRoot.EnsureInstance());
-#endif
     }
 
     public void BindRoot(GameUIRoot root)

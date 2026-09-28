@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Steamworks;
 using UnityEngine;
 
@@ -80,7 +81,12 @@ public class SteamLobby : LobbySystem
     {
         JoinRoom(new CSteamID(lobbyId));
     }
-    
+
+    public override void SetReady(bool ready)
+    {
+        
+    }
+
     public void JoinRoom(CSteamID lobbyId)
     {
         if (!SteamAPI.IsSteamRunning())

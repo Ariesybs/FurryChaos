@@ -16,6 +16,13 @@ public class UIJoinDialogCtrl : UIPanel
     {
         UIUtils.ButtonBindListener(m_CloseBtn,OnCloseClick);
         UIUtils.ButtonBindListener(m_CancelBtn,OnCloseClick);
+        UIUtils.ButtonBindListener(m_JoinBtn,OnJoinClick);
+    }
+
+    private void OnJoinClick()
+    {
+        CloseSelf();
+        GameRoot.Instance.GameFlow.LobbySystem.JoinRoom(0);
     }
 
     private void OnCloseClick()

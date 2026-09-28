@@ -24,12 +24,12 @@ public class GameFlowSystem : LogicSystem
         InGameSystem.OnInit();
         ResultSystem.OnInit();
         base.OnInit();
-        ChangeState(new BootState(this));
     }
 
     public override void OnAfterAllSystemInit()
     {
         m_Network = GameRoot.Instance.GameNet;
+        ChangeState(new BootState(this));
     }
     
     public override void OnUpdate(float deltaTime)
@@ -40,7 +40,7 @@ public class GameFlowSystem : LogicSystem
     
     public void ChangeState(IGameFlowState nextState)
     {
-        if (nextState == null || ReferenceEquals(nextState, m_CurrentState))
+        if (nextState == null || nextState == CurrentState)
         {
             return;
         }

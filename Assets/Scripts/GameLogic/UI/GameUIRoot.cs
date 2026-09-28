@@ -20,8 +20,8 @@ public class GameUIRoot : MonoBehaviour
     [Header("UI Register")]
     [SerializeField] private List<UIPanel> m_RegisterPrefabs = new();
 
-    public Transform FullScreenRoot => m_FullScreenRoot;
-    public Transform PopupRoot => m_PopupRoot;
+    public RectTransform FullScreenRoot => m_FullScreenRoot;
+    public RectTransform PopupRoot => m_PopupRoot;
 
     private void Awake()
     {
