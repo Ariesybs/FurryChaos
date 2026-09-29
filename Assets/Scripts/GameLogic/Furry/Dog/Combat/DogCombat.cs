@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class DogCombat : MonoBehaviour
+public class DogCombat : NetworkBehaviour
 {
     [SerializeField, Min(0f)] private float attackDistance = 1.2f;
     [SerializeField, Min(0f)] private float attackDuration = 0.8f;
@@ -33,11 +34,26 @@ public class DogCombat : MonoBehaviour
     public void BeginAttack(GameObject target)
     {
         nextAttackTime = Time.time + cooldown;
-        animancer?.PlayAttack();
+        ServerPlayAttack();
     }
 
     public void ApplyHit(GameObject target)
     {
         // Debug.Log("Attack Cat!");
+    }
+    
+    private void ServerPlayAttack()
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+        PlayAttackClientRpc();
+    }
+    
+    [ClientRpc]
+    private void PlayAttackClientRpc()
+    {
+        animancer.PlayAttack();
     }
 }

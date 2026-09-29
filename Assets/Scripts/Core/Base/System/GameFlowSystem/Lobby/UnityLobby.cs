@@ -4,7 +4,6 @@ using Unity.Netcode;
 public class UnityLobby : LobbySystem
 {
     private GameFlowSystem FlowSys;
-    private LobbySession m_Session;
     public UnityLobby(ISystem mainSystem) : base(mainSystem)
     {
         FlowSys = (GameFlowSystem)mainSystem;
@@ -65,7 +64,8 @@ public class UnityLobby : LobbySystem
             // 只有房主才能开始游戏
             return;
         }
-        FlowSys.ChangeState(new LoadingState(FlowSys));
+
+        LobbySession.StartGameClientRpc();
     }
 
     // ========================= 私有方法 =============================

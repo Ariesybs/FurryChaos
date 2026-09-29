@@ -79,6 +79,7 @@ public class NetworkSystem : LogicSystem
         if (isOk)
         {
             m_NetMgr.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
+            m_NetMgr.SceneManager.OnSceneEvent += OnSceneEvent;
         }
         return isOk;
     }
@@ -98,7 +99,14 @@ public class NetworkSystem : LogicSystem
         {
             return false;
         }
-        return m_NetMgr.StartClient();
+
+        var isOk = m_NetMgr.StartClient();
+        if (isOk)
+        {
+            m_NetMgr.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
+            m_NetMgr.SceneManager.OnSceneEvent += OnSceneEvent;
+        }
+        return isOk;
     }
 
     public List<ulong> GetConnectionIdList()

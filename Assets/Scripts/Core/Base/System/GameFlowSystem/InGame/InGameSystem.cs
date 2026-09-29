@@ -1,7 +1,16 @@
+using System.Collections.Generic;
+
 public class InGameSystem : SubSystem
 {
+    public InGameSession Session;
     public InGameSystem(ISystem mainSystem) : base(mainSystem)
     {
+        
+    }
+
+    public void RegisterSession(InGameSession session)
+    {
+        Session = session;
     }
 
     public void SpawnPlayer(ulong clientId)

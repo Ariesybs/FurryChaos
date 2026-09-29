@@ -37,6 +37,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59bbf84ff14e8d7428022995947f0e77
+    m_Address: prefab/InGameSession
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: fdbfb8dd9471dee48a7d33bb7bee2cbc, type: 2}
   m_SchemaSet:

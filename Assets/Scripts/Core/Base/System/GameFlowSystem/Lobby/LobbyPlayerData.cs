@@ -2,7 +2,7 @@ using System;
 using Unity.Collections;
 using Unity.Netcode;
 
-public struct PlayerLobbyData : INetworkSerializable, IEquatable<PlayerLobbyData>
+public struct LobbyPlayerData : INetworkSerializable, IEquatable<LobbyPlayerData>
 {
     public ulong ClientId;
     public FixedString64Bytes PlayerName;
@@ -18,7 +18,7 @@ public struct PlayerLobbyData : INetworkSerializable, IEquatable<PlayerLobbyData
         serializer.SerializeValue(ref CharacterName);
     }
 
-    public bool Equals(PlayerLobbyData other)
+    public bool Equals(LobbyPlayerData other)
     {
         return ClientId == other.ClientId;
     }

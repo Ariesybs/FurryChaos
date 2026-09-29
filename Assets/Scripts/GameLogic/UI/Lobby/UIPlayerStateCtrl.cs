@@ -24,14 +24,14 @@ public class UIPlayerStateCtrl : MonoBehaviour
 
     public bool InUsing = false;
     private RectTransform m_SelfRect;
-    private PlayerLobbyData m_LobbyData;
+    private LobbyPlayerData m_Data;
 
     private void Awake()
     {
         m_SelfRect = GetComponent<RectTransform>();
     }
 
-    public void Setup(PlayerLobbyData data,Vector3 infoPos, Camera lobbyCam = null)
+    public void Setup(LobbyPlayerData data,Vector3 infoPos, Camera lobbyCam = null)
     {
         UpdateDataInfo(data);
         InUsing = true;
@@ -39,12 +39,12 @@ public class UIPlayerStateCtrl : MonoBehaviour
         SetupAnchoredPosition(infoPos,lobbyCam);
     }
 
-    public void UpdateDataInfo(PlayerLobbyData data)
+    public void UpdateDataInfo(LobbyPlayerData data)
     {
-        m_LobbyData = data;
-        UIUtils.SetActive(m_PlayerOwnerGo,m_LobbyData.IsLobbyOwner);
-        UIUtils.SetActive(m_PlayerOtherGo,!m_LobbyData.IsLobbyOwner);
-        if (m_LobbyData.IsLobbyOwner)
+        m_Data = data;
+        UIUtils.SetActive(m_PlayerOwnerGo,m_Data.IsLobbyOwner);
+        UIUtils.SetActive(m_PlayerOtherGo,!m_Data.IsLobbyOwner);
+        if (m_Data.IsLobbyOwner)
         {
             SetupOwnerInfo();
         }
@@ -56,13 +56,13 @@ public class UIPlayerStateCtrl : MonoBehaviour
 
     private void SetupOwnerInfo()
     {
-        UIUtils.TmpSetText(m_OwnerName,m_LobbyData.CharacterName.ToString());
+        UIUtils.TmpSetText(m_OwnerName,m_Data.CharacterName.ToString());
     }
 
     private void SetupOtherInfo()
     {
-        UIUtils.TmpSetText(m_OtherName,m_LobbyData.CharacterName.ToString());
-        var stateIcon = m_LobbyData.IsReady ? m_InReadyIcon : m_NotReadyIcon;
+        UIUtils.TmpSetText(m_OtherName,m_Data.CharacterName.ToString());
+        var stateIcon = m_Data.IsReady ? m_InReadyIcon : m_NotReadyIcon;
         UIUtils.ImageSetIcon(m_StateImage,stateIcon);
     }
 

@@ -60,9 +60,24 @@ public sealed class CatCharacter : NetworkBehaviour , ICharacterController
             input.LockCursor(true);
         }
     }
+    
 
     private void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            input.LockCursor(false);
+        }
+        
+        if (!input.IsCursorLocked() && Input.GetMouseButtonDown(0))
+        {
+            input.LockCursor(true);
+        }
         catFsm?.OnUpdate();
 
         if (m_Entity != null && !m_Entity.CanReadLocalInput)
@@ -157,6 +172,10 @@ public sealed class CatCharacter : NetworkBehaviour , ICharacterController
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+        if (!IsOwner || followCam == null)
+        {
+            return;
+        }
         var followCamObj = Instantiate(followCam);
         if (followCamObj != null)
         {

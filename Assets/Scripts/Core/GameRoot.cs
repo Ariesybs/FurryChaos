@@ -105,6 +105,7 @@ public class GameRoot : MonoBehaviour
 
     private void OnApplicationQuit()
     {
+        GameIme.Restore();
         DisposeAllSystems();
     }
 

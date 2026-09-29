@@ -16,7 +16,7 @@ public class UILobbyCtrl : UIPanel
     public GameObject m_ReadyTipsGo;
     private LobbySystem m_Lobby;
     private LobbySession m_Session;
-    private PlayerLobbyData m_PlayerLobbyData;
+    private LobbyPlayerData m_LobbyPlayerData;
     private readonly List<UIPlayerStateCtrl> m_PlayerStateInfoList = new();
     private readonly Dictionary<ulong, UIPlayerStateCtrl> m_PlayerStateInfoDict = new();
 

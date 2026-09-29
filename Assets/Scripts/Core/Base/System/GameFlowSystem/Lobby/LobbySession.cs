@@ -9,7 +9,7 @@ public class LobbySession : NetworkBehaviour
     public event Action OnLobbyChanged;
     private NetworkSystem GameNet;
     private const int MAX_PLAYERS = 4;
-    private readonly NetworkList<PlayerLobbyData> m_LobbyPlayers = new();
+    private readonly NetworkList<LobbyPlayerData> m_LobbyPlayers = new();
     private NetworkObject m_NetObj;
         
     private void Awake()
@@ -66,14 +66,14 @@ public class LobbySession : NetworkBehaviour
         RemovePlayerFromLobby(playerId);
     }
     
-    private void OnListChanged(NetworkListEvent<PlayerLobbyData> changeEvent)
+    private void OnListChanged(NetworkListEvent<LobbyPlayerData> changeEvent)
     {
         switch (changeEvent.Type)
         {
-            case NetworkListEvent<PlayerLobbyData>.EventType.Add:
+            case NetworkListEvent<LobbyPlayerData>.EventType.Add:
                 OnPlayerJoined?.Invoke(changeEvent.Value.ClientId);
                 break;
-            case NetworkListEvent<PlayerLobbyData>.EventType.Remove:
+            case NetworkListEvent<LobbyPlayerData>.EventType.Remove:
                 OnPlayerLeaved?.Invoke(changeEvent.Value.ClientId);
                 break;
         }
@@ -96,7 +96,7 @@ public class LobbySession : NetworkBehaviour
             return;
         }
 
-        var newPlayer = new PlayerLobbyData()
+        var newPlayer = new LobbyPlayerData()
         {
             ClientId = clientId,
             PlayerName = $"Player_{clientId}",
@@ -124,12 +124,12 @@ public class LobbySession : NetworkBehaviour
         }
     }
 
-    public NetworkList<PlayerLobbyData> GetLobbyPlayers()
+    public NetworkList<LobbyPlayerData> GetLobbyPlayers()
     {
         return m_LobbyPlayers;
     }
 
-    public PlayerLobbyData GetLobbyPlayerById(ulong clientId)
+    public LobbyPlayerData GetLobbyPlayerById(ulong clientId)
     {
         foreach (var player in m_LobbyPlayers)
         {
@@ -142,7 +142,7 @@ public class LobbySession : NetworkBehaviour
         return default;
     }
 
-    public PlayerLobbyData GetLocalPlayerLobbyData()
+    public LobbyPlayerData GetLocalPlayerLobbyData()
     {
         if (NetworkManager.Singleton == null)
         {
@@ -179,6 +179,12 @@ public class LobbySession : NetworkBehaviour
         var player = m_LobbyPlayers[idx];
         player.IsReady = ready;
         m_LobbyPlayers[idx] = player;
+    }
+    
+    [ClientRpc]
+    public void StartGameClientRpc()
+    {
+        GameRoot.Instance.GameFlow.ChangeState(new LoadingState(GameRoot.Instance.GameFlow));
     }
     
     // ====================== 内部工具 ========================

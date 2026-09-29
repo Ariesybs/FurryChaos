@@ -8,35 +8,13 @@ public sealed class InGameState : GameFlowState
     public override void OnEnter()
     {
         InGamePanel = UIMgr.Open<UIMainInGameCtrl>();
-        Network.OnClientConnected += OnClientConnected;
-        // Network.ClientDisconnected += OnClientDisconnected;
-        // if (sceneName != SceneDefine.GameScene)
-        //     return;
-        // if (Network.IsServer)
-        // {
-        //     foreach (ulong clientId in clientsCompleted)
-        //     {
-        //         Flow.InGameSystem.SpawnPlayer(clientId);
-        //     }
-        // }
-    }
-
-    private void OnClientConnected(ulong clientId)
-    {
-        if (Network.IsServer)
-        {
-            Flow.InGameSystem.SpawnPlayer(clientId);
-        }
-    }
-
-    private void OnClientDisconnected(ulong clientId)
-    {
-        // 更新玩家列表或检测房主退出
+        // 禁用中文输入
+        GameIme.Disable();
     }
 
     public override void OnExit()
     {
-        Network.OnClientConnected -= OnClientConnected;
-        // Network.ClientDisconnected -= OnClientDisconnected;
+        // 启用中文输入
+        GameIme.Restore();
     }
 }

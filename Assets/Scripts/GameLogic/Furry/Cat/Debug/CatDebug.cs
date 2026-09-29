@@ -1,9 +1,19 @@
 using System;
 using KinematicCharacterController;
+using Unity.Netcode;
 using UnityEngine;
 
-public class CatDebug : MonoBehaviour
+public class CatDebug : NetworkBehaviour
 {
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+        if (!IsOwner)
+        {
+            Destroy(this);
+        }
+    }
+
     public KinematicCharacterMotor CatMotor;
     public CatAnimancer CatAnimancer; 
     private bool slowDown = false;

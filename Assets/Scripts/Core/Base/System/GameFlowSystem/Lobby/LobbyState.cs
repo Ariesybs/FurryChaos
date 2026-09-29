@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class LobbyState : GameFlowState
 {
     private readonly AssetLoader m_Loader;
-    private NetworkSystem m_GameNet; 
+    private readonly NetworkSystem m_GameNet; 
     private GameObject m_LobbyStageGo;
     private GameObject m_LobbySessionGo;
     private UIPanel m_LobbyUI;
@@ -57,7 +57,7 @@ public sealed class LobbyState : GameFlowState
     {
         base.OnExit();
         m_Loader.ReleasePrefab(STAGE,m_LobbyStageGo);
-        Object.Destroy(m_LobbySessionGo);
+        // Object.Destroy(m_LobbySessionGo);
         UIMgr.Close(m_LobbyUI);
     }
 }

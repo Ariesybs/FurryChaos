@@ -16,9 +16,11 @@ public class DogAnimancer : MonoBehaviour
     private NavMeshAgent agent;
     private float smoothedSpeed;
     private bool isPlayingAction;
+    private DogCharacter m_Dog;
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        m_Dog = GetComponent<DogCharacter>();
     }
     private void Update()
     {
@@ -26,7 +28,8 @@ public class DogAnimancer : MonoBehaviour
         {
             return;
         }
-        UpdateLocomotion(agent.velocity.magnitude);
+        var speed = m_Dog != null ? m_Dog.SyncedSpeed : agent.velocity.magnitude;
+        UpdateLocomotion(speed);
     }
     private void UpdateLocomotion(float speed)
     {

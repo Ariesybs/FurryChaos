@@ -24,6 +24,11 @@ public class CatInput
         Cursor.lockState = _lock ? CursorLockMode.Locked : CursorLockMode.None;
     }
 
+    public bool IsCursorLocked()
+    {
+        return Cursor.lockState == CursorLockMode.Locked;
+    }
+
     public InputCmd ReadCmd()
     {
         if (m_LockInput) return InputCmd.Empty;
