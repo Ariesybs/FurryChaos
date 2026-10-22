@@ -41,6 +41,6 @@ public sealed class CanSeeCat : Conditional
     
     public override void OnReset()
     {
-        Target = null;
+        Target.Value = null;
     }
 }

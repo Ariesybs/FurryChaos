@@ -27,7 +27,8 @@ public struct CatSnapshot : INetworkSerializable
 [RequireComponent(typeof(NetworkObject))]
 public sealed class CatNetworkEntity : NetworkBehaviour
 {
-    public bool CanReadLocalInput => IsSpawned && IsOwner;
+    public bool LocalOffline;
+    public bool CanReadLocalInput => (IsSpawned && IsOwner) || LocalOffline;
     public bool RunsAuthoritativeSimulation => IsSpawned && IsServer;
     public uint CurrentNetworkTick =>
         IsSpawned ? (uint)NetworkManager.LocalTime.Tick : 0;

@@ -10,11 +10,14 @@ public sealed class ChaseCat : Action
     [SharedRequired]
     public SharedGameObject Target;
     public SharedFloat AttackDistance = 1.2f;
+    public SharedVector3 LastSeenPosition;
     private NavMeshAgent agent;
+    private DogVision vison;
     
     public override void OnAwake()
     {
         agent = GetComponent<NavMeshAgent>();
+        vison = GetComponent<DogVision>();
     }
 
     public override TaskStatus OnUpdate()
@@ -41,6 +44,14 @@ public sealed class ChaseCat : Action
         {
             return TaskStatus.Failure;
         }
+
+        if (vison != null && !vison.CanSeeCat(Target.Value))
+        {
+            // 丢失目标
+            LastSeenPosition = Target.Value.transform.position;
+            Target.Value = null;
+            return TaskStatus.Failure;
+        }
         
         if (agent.remainingDistance <= AttackDistance.Value)
         {
@@ -62,7 +73,7 @@ public sealed class ChaseCat : Action
     
     public override void OnReset()
     {
-        Target = null;
+        Target.Value = null;
         AttackDistance = 1.2f;
     }
 }

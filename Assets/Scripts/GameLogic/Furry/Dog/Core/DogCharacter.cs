@@ -8,13 +8,17 @@ public class DogCharacter : NetworkBehaviour
     private BehaviorTree m_BehaviorTree;
     private NavMeshAgent m_Agent;
     private readonly NetworkVariable<float> m_Speed = new();
-
+    public bool debug;
     public float SyncedSpeed => m_Speed.Value;
 
     private void Awake()
     {
         m_BehaviorTree = GetComponent<BehaviorTree>();
         m_Agent = GetComponent<NavMeshAgent>();
+        if (debug)
+        {
+            m_BehaviorTree.EnableBehavior();
+        }
     }
 
     public override void OnNetworkSpawn()

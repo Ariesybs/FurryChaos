@@ -11,7 +11,7 @@ public class SteamSdk : SubSystem
         IsInitialized = SteamAPI.Init();
         if (!IsInitialized)
         {
-            Log.Error("Steam 初始化失败，请确认 Steam 客户端已运行。");
+            Log.Info("Steam 初始化失败，请确认 Steam 客户端已运行。");
             return;
         }
         var hostSteamId = SteamUser.GetSteamID().m_SteamID;

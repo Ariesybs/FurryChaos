@@ -59,12 +59,18 @@ public sealed class CatCharacter : NetworkBehaviour , ICharacterController
         {
             input.LockCursor(true);
         }
+
+        if (localMove)
+        {
+            SpawnCamera();
+            input.LockCursor(true);
+        }
     }
     
 
     private void Update()
     {
-        if (!IsOwner)
+        if (!IsOwner && !localMove)
         {
             return;
         }
@@ -91,14 +97,17 @@ public sealed class CatCharacter : NetworkBehaviour , ICharacterController
             cmd.CameraYaw = catCam.transform.eulerAngles.y;
         }
         cmd.Sequence = ++m_InputSequence;
+        
+        if (localMove)
+        {
+            ApplyInput(cmd);
+            return;
+        }
+        
         if (m_Entity != null)
         {
             cmd.ClientTick = m_Entity.CurrentNetworkTick;
             m_Entity.SubmitLocalInput(cmd);
-        }
-        else if (localMove)
-        {
-            ApplyInput(cmd);
         }
     }
 
@@ -109,7 +118,7 @@ public sealed class CatCharacter : NetworkBehaviour , ICharacterController
 
     private void ApplyInput(InputCmd command)
     {
-        if (!enableLocalPredict)
+        if (!localMove)
         {
             return;
         }
@@ -176,6 +185,12 @@ public sealed class CatCharacter : NetworkBehaviour , ICharacterController
         {
             return;
         }
+
+        SpawnCamera();
+    }
+
+    private void SpawnCamera()
+    {
         var followCamObj = Instantiate(followCam);
         if (followCamObj != null)
         {
@@ -184,6 +199,8 @@ public sealed class CatCharacter : NetworkBehaviour , ICharacterController
             {
                 c.Follow = camFollowPoint;
                 c.LookAt = camFollowPoint;
+                var occlusionCom = c.GetComponent<CameraOcclusionFader>();
+                occlusionCom?.SetTarget(this.camFollowPoint);
             }
         }
     }

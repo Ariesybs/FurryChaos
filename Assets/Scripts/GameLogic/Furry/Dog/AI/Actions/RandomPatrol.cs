@@ -5,22 +5,22 @@ using BehaviorDesigner.Runtime.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
 
-[TaskCategory("Dog/Movement")]
-[TaskDescription("在出生点附近随机选择 NavMesh 位置巡逻。")]
+[TaskCategory("Dog/Patrol")]
+[TaskDescription("巡逻")]
 public class RandomPatrol : Action
 {
-     public SharedFloat PatrolRadius = 8f;
+    public SharedFloat PatrolRadius = 8f;
     public SharedFloat ArrivalDistance = 0.3f;
     public SharedFloat WaitDuration = 1.5f;
+    public SharedVector3 TargetPosition;
     private NavMeshAgent agent;
-    private Vector3 patrolCenter;
     private bool hasDestination;
     private bool isWaiting;
     private float waitTimer;
     public override void OnAwake()
     {
         agent = GetComponent<NavMeshAgent>();
-        patrolCenter = transform.position;
+        TargetPosition = transform.position;
     }
     
     public override void OnStart()
@@ -29,6 +29,7 @@ public class RandomPatrol : Action
         waitTimer = 0f;
         hasDestination = TrySetNextDestination();
     }
+    
     public override TaskStatus OnUpdate()
     {
         if (agent == null || !agent.isOnNavMesh)
@@ -80,7 +81,7 @@ public class RandomPatrol : Action
         for (int i = 0; i < maxAttempts; i++)
         {
             Vector2 randomCircle = Random.insideUnitCircle * PatrolRadius.Value;
-            Vector3 randomPosition = patrolCenter + transform.right * randomCircle.x + transform.forward * randomCircle.y;
+            Vector3 randomPosition = TargetPosition.Value + transform.right * randomCircle.x + transform.forward * randomCircle.y;
             if (!NavMesh.SamplePosition(randomPosition, out NavMeshHit hit, 2f, agent.areaMask))
             {
                 continue;
