@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class ConfigLoader : SubSystem
 {
-    private LoadSystem m_MainLoader;
+    private readonly LoadSystem m_MainLoader;
     private const string prefix = "cfg/";
     public ConfigLoader(ISystem mainSystem) : base(mainSystem)
     {
-        
+        m_MainLoader = (LoadSystem)mainSystem;
     }
     
     public async UniTask<T> LoadJson<T>(string key)

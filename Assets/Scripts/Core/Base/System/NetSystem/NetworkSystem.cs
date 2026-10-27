@@ -17,6 +17,7 @@ public class NetworkSystem : LogicSystem
         Steam
     }
     protected override string SystemTag => "NetSystem";
+    public ulong CurNetId => NetworkManager.Singleton.LocalClientId;
     public bool IsServer => NetworkManager.Singleton.IsServer;
     public bool IsNetworkRunning  => m_NetMgr != null && m_NetMgr.IsListening; // 服务是否正在运行
     [SerializeField]

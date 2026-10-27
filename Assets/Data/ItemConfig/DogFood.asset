@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfc33c103bb7a2649b820953440b1c54, type: 3}
+  m_Name: DogFood
+  m_EditorClassIdentifier: 
+  Id: 2
+  Name: "\u72D7\u7CAE"
+  Icon: {fileID: 21300000, guid: caa3120af75487143865487aef2139fe, type: 3}
+  Type: 1
+  Description: 
+  Consumable: 0
+  EnableList: 0
+  Price: 0
+  Weight: 5
+  Effects: []
+  references:
+    version: 2
+    RefIds: []
