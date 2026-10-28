@@ -13,7 +13,7 @@ public enum ItemType
     Disguise, // 装扮道具
 }
 
-[CreateAssetMenu(menuName = "Game/Item/Item Data")]
+[CreateAssetMenu(menuName = "GameData/Item Data")]
 public class ItemData : ScriptableObject
 {
     [LabelText("道具ID")]
