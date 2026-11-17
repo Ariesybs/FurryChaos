@@ -18,9 +18,10 @@ MonoBehaviour:
   Type: 1
   Description: 
   Consumable: 0
+  EnableMerge: 0
   EnableList: 0
   Price: 0
-  Weight: 5
+  Weight: 100
   Effects: []
   references:
     version: 2

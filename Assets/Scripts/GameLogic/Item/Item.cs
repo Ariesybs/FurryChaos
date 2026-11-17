@@ -6,4 +6,13 @@ using UnityEngine.Serialization;
 public class Item : NetworkBehaviour
 {
     [FormerlySerializedAs("Config")] public ItemData data;
+
+    public virtual void Dispose()
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+        NetworkObject.Despawn();
+    }
 }

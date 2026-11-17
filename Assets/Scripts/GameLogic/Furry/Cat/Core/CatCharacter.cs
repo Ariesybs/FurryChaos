@@ -5,7 +5,7 @@ using KinematicCharacterController;
 using Unity.Netcode;
 using UnityEngine;
 
-public sealed class CatCharacter : NetworkBehaviour , ICharacterController
+public sealed class CatCharacter : Player , ICharacterController
 {
     public enum CatAnimationState : byte
     {
@@ -43,8 +43,9 @@ public sealed class CatCharacter : NetworkBehaviour , ICharacterController
 
     private CatNetworkEntity m_Entity;
     private uint m_InputSequence;
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         motor.CharacterController = this;
         catFsm = new CatFSM(this);
         catFsm.SwitchState(CatFSM.State.None,CatFSM.State.Locomotion);

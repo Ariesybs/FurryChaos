@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 [Serializable]
 public class NetworkSystem : LogicSystem
 {
+    public bool m_StartHostOnAwake = true;
     [Serializable]
     public enum TransportMode
     {
@@ -46,12 +47,12 @@ public class NetworkSystem : LogicSystem
         {
             case TransportMode.Unity:
             {
-                m_NetMgr.NetworkConfig.NetworkTransport = m_UnityTransport;
+                InitUnityTransport();
                 break;
             }
             case TransportMode.Steam:
             {
-                m_NetMgr.NetworkConfig.NetworkTransport = m_SteamTransport;
+                InitSteamTransport();
                 break;
             }
         }
@@ -67,6 +68,41 @@ public class NetworkSystem : LogicSystem
         {
             OnClientDisconnected?.Invoke(clientId);
         };
+        
+        if (m_StartHostOnAwake)
+        {
+            StartHost();
+        }
+    }
+
+    private void InitUnityTransport()
+    {
+        if (m_UnityTransport == null)
+        {
+            var transportGo = new GameObject("UnityTransport",typeof(UnityTransport));
+            var transport = transportGo.GetComponent<UnityTransport>();
+            m_NetMgr.NetworkConfig.NetworkTransport = transport;
+        }
+        else
+        {
+            m_NetMgr.NetworkConfig.NetworkTransport = m_UnityTransport;
+        }
+        
+    }
+
+    private void InitSteamTransport()
+    {
+        if (m_SteamTransport == null)
+        {
+            var transportGo = new GameObject("SteamTransport",typeof(SteamNetworkingSocketsTransport));
+            var transport = transportGo.GetComponent<SteamNetworkingSocketsTransport>();
+            m_NetMgr.NetworkConfig.NetworkTransport = transport;
+        }
+        else
+        {
+            m_NetMgr.NetworkConfig.NetworkTransport = m_SteamTransport;
+        }
+        
     }
 
     public bool StartHost()

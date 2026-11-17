@@ -8,21 +8,21 @@ public class BrokenFurniture : TaskUnit
 {
     public override void Init()
     {
-        throw new System.NotImplementedException();
+        
     }
 
     public override bool Done()
     {
-        throw new System.NotImplementedException();
+        return false;
     }
 
     public override float GetProgress()
     {
-        throw new System.NotImplementedException();
+        return 0;
     }
 
     public override string GetProgressStr()
     {
-        throw new System.NotImplementedException();
+        return "1/2";
     }
 }

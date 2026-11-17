@@ -18,6 +18,8 @@ public class GameRoot : MonoBehaviour
     public NetworkSystem GameNet; // 网络系统
     public LoadSystem GameLoader; // 载入系统
     public UISystem GameUI; // UI系统
+    public GamePlaySystem GamePlay; // 核心玩法系统
+    public DataSystem GameData;
     #endregion
     
     private readonly Dictionary<Type, ISystem> m_GameSystems = new();
@@ -37,9 +39,13 @@ public class GameRoot : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         RegisterSystems();
+    }
+
+    private void Start()
+    {
         InitializeSystems();
     }
-    
+
     private void RegisterSystems()
     {
 #if UNITY_SERVER
@@ -54,6 +60,8 @@ public class GameRoot : MonoBehaviour
         GameMsg = RegisterSystem(new MsgSystem());
         GameTimer = RegisterSystem(new TimeSystem());
         GameLoader = RegisterSystem(new LoadSystem());
+        GamePlay = RegisterSystem(new GamePlaySystem());
+        GameData = RegisterSystem(new DataSystem());
     }
     private void InitializeSystems()
     {

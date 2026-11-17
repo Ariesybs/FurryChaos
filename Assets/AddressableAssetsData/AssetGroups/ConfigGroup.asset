@@ -18,7 +18,12 @@ MonoBehaviour:
   m_GUID: a215c0344200d9c4d9b2c85a26111c75
   m_SerializeEntries:
   - m_GUID: c25301024ff51b14f8f676bc70bc3fc3
-    m_Address: cfg/ItemDatabase
+    m_Address: cfg/ItemDB
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1b38b755375b2a144ad7e2172aeb27e7
+    m_Address: cfg/task/guide
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

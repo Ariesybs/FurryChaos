@@ -24,6 +24,23 @@ public class InteractionDetector : MonoBehaviour
 #endif
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E) && Current != null)
+        {
+            Interact(Current);
+        }
+    }
+    
+    // 交互
+    private void Interact(IInteractable item)
+    {
+        if (item.CanInteract(0))
+        {
+            item.OnPressInteract(0);
+        }        
+    }
+
     private void FixedUpdate()
     {
         IInteractable now = null;

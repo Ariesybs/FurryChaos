@@ -1,3 +1,4 @@
+using Animancer;
 using BehaviorDesigner.Runtime;
 using Unity.Netcode;
 using UnityEngine;
@@ -34,14 +35,10 @@ public class DogCharacter : NetworkBehaviour
 
     private void Update()
     {
-        if (!IsServer || m_Agent == null)
+        if (!IsSpawned || !IsServer || m_Agent == null)
         {
             return;
         }
-
-        if (m_Speed != null)
-        {
-            m_Speed.Value = m_Agent.velocity.magnitude;
-        }
+        m_Speed.Value = m_Agent.velocity.magnitude;
     }
 }
