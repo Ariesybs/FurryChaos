@@ -11,7 +11,7 @@ public class UITaskInfoCtrl : MonoBehaviour
     void Start()
     {
         GameEvent.Register<MsgGameTaskUpdate>(OnTaskUpdate);
-        var task = GameRoot.Instance.GamePlay.TaskSystem.GetCurTask();
+        var task = GameRoot.Instance.GamePlay?.TaskSystem?.GetCurTask();
         UpdateTaskInfo(task);
     }
 
