@@ -9,9 +9,6 @@ public struct TipsInfo
     public string KeyHint;         // “空格” / “E”，没有则只显示文字
     public Sprite Icon;            // 提示图标
     public int Priority;           // 同屏超出上限时按优先级裁剪
-    public Transform Observer;
-    public float ShowDistance;     // 进入该距离才显示（跳跃提示用）
-    public bool HideWhenOccluded;  // 被墙挡住时隐藏（跳跃=true，引导=false）
     public bool ClampToScreenEdge; // 目标在屏幕外时钉在边缘+箭头（引导=true，跳跃=false）
     public float Duration;         // ≤0 表示由业务方手动 Hide（引导/跳跃都是）
 
@@ -31,5 +28,6 @@ public struct TipAnchor
 
 public enum ENUM_TIPS_TYPE
 {
-    TIPS_LANDING_SURFACE
+    TIPS_LANDING_SURFACE,
+    TIPS_INTERACTABLE_ITEM
 }

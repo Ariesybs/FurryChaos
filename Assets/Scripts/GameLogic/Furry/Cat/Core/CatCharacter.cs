@@ -25,8 +25,10 @@ public sealed class CatCharacter : Player , ICharacterController
     public CatMovementProfile moveConfig;
     // 输入
     public CatInput input;
-    // 跳跃扫描
-    public CatJumpScanner jumpScanner;
+    // 跳跃点扫描（Awake 时自动获取，可为空）
+    public LandingSurfaceScanner LandingScanner;
+    // 期望移动方向（世界空间水平面），由 CatFsmLocomotion 写入，扫描器读取
+    public Vector3 DesiredMoveDirection { get; set; }
     // 相机
     [Header("相机")]
     public Transform camFollowPoint;
@@ -43,6 +45,11 @@ public sealed class CatCharacter : Player , ICharacterController
 
     private CatNetworkEntity m_Entity;
     private uint m_InputSequence;
+    
+    private readonly NetworkVariable<bool> m_IsRestrained = new();
+    /// <summary>是否被限制行动（被关押或已上车）。服务端写入，所有端可读。</summary>
+    public bool IsRestrained => m_IsRestrained.Value;
+    
     protected override void Awake()
     {
         base.Awake();
@@ -52,6 +59,7 @@ public sealed class CatCharacter : Player , ICharacterController
         input = new CatInput();
         catCam = Camera.main;
         m_Entity = GetComponent<CatNetworkEntity>();
+        LandingScanner = GetComponent<LandingSurfaceScanner>();
     }
 
     private void Start()
@@ -76,15 +84,15 @@ public sealed class CatCharacter : Player , ICharacterController
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            input.LockCursor(false);
-        }
+        // if (Input.GetKeyDown(KeyCode.Escape))
+        // {
+        //     input.LockCursor(false);
+        // }
         
-        if (!input.IsCursorLocked() && Input.GetMouseButtonDown(0))
-        {
-            input.LockCursor(true);
-        }
+        // if (!input.IsCursorLocked() && Input.GetMouseButtonDown(0))
+        // {
+        //     input.LockCursor(true);
+        // }
         catFsm?.OnUpdate();
 
         if (m_Entity != null && !m_Entity.CanReadLocalInput)
@@ -209,5 +217,17 @@ public sealed class CatCharacter : Player , ICharacterController
     public Transform GetCamFollowPoint()
     {
         return camFollowPoint;
+    }
+    
+    /// <summary>服务端：设置限制状态并把猫传送到指定位置（笼子、车座或释放点）。</summary>
+    public void ServerSetRestrained(bool isRestrained, Vector3 position, Quaternion rotation)
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+        m_IsRestrained.Value = isRestrained;
+        ApplyNetworkInput(InputCmd.Empty);
+        motor.SetPositionAndRotation(position, rotation, true);
     }
 }

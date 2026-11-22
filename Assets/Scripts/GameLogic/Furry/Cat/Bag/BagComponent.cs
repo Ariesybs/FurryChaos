@@ -1,4 +1,6 @@
-using System;using Unity.Netcode;
+using System;
+using System.Collections.Generic;
+using Unity.Netcode;
 
 public class BagComponent : NetworkBehaviour
 {
@@ -152,86 +154,83 @@ public class BagComponent : NetworkBehaviour
         return weight;
     }
     
-}
-
-public struct BagItemNetData : INetworkSerializable, IEquatable<BagItemNetData>
-{
-    public int InstanceId;   // 实例唯一ID,服务器分配,背包内唯一
-    public uint ItemId;       // 指向 ItemData(静态配置)
-    public float weight;
-    public int Flags;         // 位标记:是否已使用、是否绑定等
-
-    public void NetworkSerialize<T>(BufferSerializer<T> s) where T : IReaderWriter
-    {
-        s.SerializeValue(ref InstanceId);
-        s.SerializeValue(ref ItemId);
-        s.SerializeValue(ref weight);
-        s.SerializeValue(ref Flags);
-    }
-
-    public bool Equals(BagItemNetData o) =>
-        InstanceId == o.InstanceId && ItemId == o.ItemId;
-}
-
-public struct SlotData : INetworkSerializable, IEquatable<SlotData>
-{
-    public byte SlotId;
-    public uint ItemId;
-    public ushort Count;
-    public byte Flags;
-
-    public enum State : byte
-    {
-        Empty = 1 << 0,
-        Used = 1 << 1,
-        Locked = 1 << 2,
-    }
-
-    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
-    {
-        serializer.SerializeValue(ref SlotId);
-        serializer.SerializeValue(ref ItemId);
-        serializer.SerializeValue(ref Count);
-        serializer.SerializeValue(ref Flags);
-    }
-
-    public bool IsEmpty()
-    {
-        return Flags == (byte)State.Empty;
-    }
-
+    // Assets/Scripts/GameLogic/Furry/Cat/Bag/BagComponent.cs
     /// <summary>
-    /// 返回当前槽位物品的携带重量,单位g
+    /// 服务端：移除某种物品的全部数量，返回移除的总重量(g)。
+    /// 交付必须走这里真正扣除，否则重复交互可以刷任务进度。
     /// </summary>
-    /// <returns></returns>
-    public int GetWight()
+    public int ServerRemoveAllOf(uint itemId)
     {
-        var weight = 0;
-        if (Flags == (byte)State.Used)
+        if (!IsServer)
         {
-            var item = GameData.ItemDB.GetItemById(ItemId);
-            if (item != null)
-            {
-                weight = item.Weight * Count;
-            }
+            return 0;
         }
 
-        return weight;
+        for (var i = 0; i < Slots.Count; i++)
+        {
+            var slot = Slots[i];
+            if (slot.IsEmpty() || slot.ItemId != itemId)
+            {
+                continue;
+            }
+
+            var weight = slot.GetWight();
+            slot.ItemId = 0;
+            slot.Count = 0;
+            slot.SetState(SlotData.State.Empty);
+            Slots[i] = slot;
+            return weight; // 同种物品只占一个槽位
+        }
+
+        return 0;
     }
 
-    public void SetState(State state)
+    /// <summary>服务端：统计当前携带物的数量与总价值，用于撤离时生成快照。</summary>
+    public void ServerGetCarrySummary(out int itemCount, out int totalValue)
     {
-        Flags = (byte)state;
-    }
+        itemCount = 0;
+        totalValue = 0;
+        foreach (var slot in Slots)
+        {
+            if (slot.IsEmpty())
+            {
+                continue;
+            }
 
-    public State GetState()
-    {
-        return (State)Flags;
-    }
+            var item = GameData.ItemDB.GetItemById(slot.ItemId);
+            if (item == null)
+            {
+                continue;
+            }
 
-    public bool Equals(SlotData other)
+            itemCount += slot.Count;
+            totalValue += item.Price * slot.Count;
+        }
+    }
+    
+    public void ServerTakeLoot(List<SlotData> output)
     {
-        return SlotId == other.SlotId && ItemId == other.ItemId &&
-               Count == other.Count && Flags == other.Flags;
+        if (!IsServer)
+        {
+            return;
+        }
+        for (var i = 0; i < Slots.Count; i++)
+        {
+            var slot = Slots[i];
+            if (slot.IsEmpty())
+            {
+                continue;
+            }
+            var item = GameData.ItemDB.GetItemById(slot.ItemId);
+            if (item == null || item.LootValue <= 0)
+            {
+                continue; // 增益道具等非赃物留在背包
+            }
+            output.Add(slot);
+            slot.ItemId = 0;
+            slot.Count = 0;
+            slot.SetState(SlotData.State.Empty);
+            Slots[i] = slot;
+        }
     }
 }

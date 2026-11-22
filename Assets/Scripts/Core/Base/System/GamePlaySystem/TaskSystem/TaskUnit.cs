@@ -2,7 +2,7 @@ using System;
 using Sirenix.OdinInspector;
 
 /// <summary>
-/// 任务单元，
+/// 任务单元：配置数据 + 无状态判定，不保存任何本局进度。
 /// </summary>
 [Serializable]
 public abstract class TaskUnit
@@ -11,9 +11,20 @@ public abstract class TaskUnit
     public string Description;
     [LabelText("是否是可选任务")]
     public bool IsOptional;
+    [LabelText("要求数量")]
+    public int RequiredCount = 1;
 
-    public abstract void Init(); // 任务初始化，一般用于注册事件
-    public abstract bool Done(); // 任务是否完成
-    public abstract float GetProgress(); // 获取任务进度
-    public abstract string GetProgressStr(); // 获取任务进度文本
+    /// <summary>目标值，默认用要求数量。</summary>
+    public virtual float GetTargetValue() => RequiredCount;
+
+    /// <summary>一批货物装车时给多少进度，不关心则返回 0。</summary>
+    public virtual float EvaluateCargoLoaded(MsgCargoLoaded msg) => 0f;
+
+    /// <summary>客户端用复制来的数值生成显示文本。</summary>
+    public virtual string FormatProgress(float current, float target) => $"{current:0.#}/{target:0.#}";
+
+    public virtual TaskUnitRuntime CreateRuntime()
+    {
+        return new TaskUnitRuntime(this);
+    }
 }

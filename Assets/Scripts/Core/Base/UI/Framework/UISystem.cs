@@ -8,7 +8,7 @@ public class UISystem : LogicSystem
     private struct StackItem
     {
         public UIPanel Panel;
-        public IUIArgs Args;
+        public object Args;
     }
 
     private readonly List<StackItem> m_Stack = new();
@@ -46,7 +46,7 @@ public class UISystem : LogicSystem
 #endif
     }
 
-    public T Open<T>(IUIArgs args = null) where T : UIPanel
+    public T Open<T>(object args = null) where T : UIPanel
     {
         var prefab = UIRegister.GetPrefab<T>();
         if (prefab == null)
@@ -58,7 +58,7 @@ public class UISystem : LogicSystem
         return Open(prefab, args) as T;
     }
 
-    public UIPanel Open(UIPanel prefab, IUIArgs args = null)
+    public UIPanel Open(UIPanel prefab, object args = null)
     {
         if (m_Root == null)
         {

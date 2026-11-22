@@ -12,6 +12,14 @@ public class InGameSystem : SubSystem
     {
         Session = session;
     }
+    
+    public void UnregisterSession(InGameSession session)
+    {
+        if (Session == session)
+        {
+            Session = null;
+        }
+    }
 
     public void SpawnPlayer(ulong clientId)
     {

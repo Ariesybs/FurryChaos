@@ -37,6 +37,7 @@ public class ItemData : ScriptableObject
     public int Price;
     [LabelText("道具重量")]
     public int Weight; // 重量
+    public int LootValue;
     
     [Header("效果列表")]
     [SerializeReference]

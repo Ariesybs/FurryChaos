@@ -1,3 +1,4 @@
+using System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -10,6 +11,19 @@ public class InteractableItem : Item, IInteractable
     }
     [SerializeField]
     private string m_Prompt;
+    
+    // 高光组件
+    [SerializeField]
+    private Outline m_Outline;
+
+    private void Awake()
+    {
+        if (m_Outline == null)
+        {
+            m_Outline = GetComponent<Outline>();
+        }
+        SetHighLight(false);
+    }
 
     public string GetPrompt()
     {
@@ -25,6 +39,16 @@ public class InteractableItem : Item, IInteractable
     }
 
     public InteractType InteractType { get; }
+    public Vector3 GetPos()
+    {
+        return transform.position;
+    }
+
+    public void SetHighLight(bool enable)
+    {
+        Utils.SetCompActive(m_Outline,enable);
+    }
+
     public virtual void OnPressInteract(ulong netEntityId)
     {
         

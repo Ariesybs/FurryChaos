@@ -59,8 +59,10 @@ GameObject:
   - component: {fileID: 6456134436247416974}
   - component: {fileID: 1754972271311178593}
   - component: {fileID: 8142067962061993165}
-  - component: {fileID: 6389631952048776755}
   - component: {fileID: 4213957499542924934}
+  - component: {fileID: 4959036929070755972}
+  - component: {fileID: 6092434206292424426}
+  - component: {fileID: 9203025422065284094}
   m_Layer: 8
   m_Name: Cat
   m_TagString: Untagged
@@ -163,7 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 1776266261
+  GlobalObjectIdHash: 954232462
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -183,9 +185,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16e34b5f384def041b658b0d190a0ffb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_PlayerComponents:
+  - {fileID: 6092434206292424426}
   animancer: {fileID: 5829520018134225915}
   moveConfig: {fileID: 11400000, guid: 29869d15596a2194b9eb4be446b2d213, type: 2}
-  jumpScanner: {fileID: 6389631952048776755}
+  LandingScanner: {fileID: 0}
   camFollowPoint: {fileID: 3448660960967702447}
   followCam: {fileID: 3261350815020501097, guid: 56793c8dbdce87b4689ebbcea5718da7,
     type: 3}
@@ -193,29 +197,6 @@ MonoBehaviour:
   motor: {fileID: 6456134436247416974}
   enableLocalPredict: 0
   localMove: 1
---- !u!114 &6389631952048776755
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7954109546263882847}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f2a5c49d6feb41359f753bd47c486896, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  obstacleMask:
-    serializedVersion: 2
-    m_Bits: 0
-  jumpLinkMask:
-    serializedVersion: 2
-    m_Bits: 64
-  scanRadius: 1
-  maxResults: 16
-  directionWeight: 2
-  distanceWeight: 1
-  heightWeight: 0.5
 --- !u!114 &4213957499542924934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -228,9 +209,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 968a81ea1a5043c2974c5e89c2beb618, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LocalOffline: 1
   m_PositionSharpness: 12
   m_RotationSharpness: 15
   m_TeleportDistance: 3
+--- !u!114 &4959036929070755972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7954109546263882847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0304f93582c640469fd4a89f055376b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Radius: 0.7
+  m_DetectorLayer:
+    serializedVersion: 2
+    m_Bits: 1025
+--- !u!114 &6092434206292424426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7954109546263882847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04b9854f879f4961a3605403dcda927a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxWeight: 3000
+  SlotMaxCount: 64
+--- !u!114 &9203025422065284094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7954109546263882847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5116282a05fb48bbb9d11054f02b78e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Radius: 1.25
+  m_TipInterval: 0.15
+  m_MinHeight: 0.1
+  m_DirectionDot: 0.3
 --- !u!1 &9049318572765844060
 GameObject:
   m_ObjectHideFlags: 0
@@ -658,8 +686,8 @@ MonoBehaviour:
     _SynchronizeChildren: 
     _Thresholds:
     - {x: 0, y: 0.4}
-    - {x: -0.15, y: 0.35}
-    - {x: 0.15, y: 0.35}
+    - {x: -0.3, y: 0.35}
+    - {x: 0.3, y: 0.35}
     _DefaultParameter: {x: 0, y: 0}
     _Type: 0
     _ParameterNameX: {fileID: 0}
@@ -691,11 +719,11 @@ MonoBehaviour:
     _Thresholds:
     - {x: 0, y: 0}
     - {x: 0, y: 1}
-    - {x: -0.3, y: 0.7}
-    - {x: 0.3, y: 0.7}
+    - {x: -0.45, y: 0.7}
+    - {x: 0.45, y: 0.7}
     - {x: 0, y: 2.5}
-    - {x: -0.6, y: 2}
-    - {x: 0.6, y: 2}
+    - {x: -1, y: 2}
+    - {x: 1, y: 2}
     _DefaultParameter: {x: 0, y: 0}
     _Type: 1
     _ParameterNameX: {fileID: 0}

@@ -22,9 +22,11 @@ public class CatFsmLocomotion : CatFsmBase
         m_CachedCmd = cmd;
         if (cmd.IsPressed(InputAction.Jump))
         {
-            if (cat.jumpScanner.TryFindBestJumpLink(m_DesiredMoveDirection, out CatJumpLink jumpLink))
+            // 扫描器按键瞬间实时扫描：有顺方向的可跳表面则带计划起跳，没有则原地不动
+            if (cat.LandingScanner != null &&
+                cat.LandingScanner.TryGetBestCandidate(m_DesiredMoveDirection, out var jumpPlan))
             {
-                SwitchState(CurState, CatFSM.State.Jump,jumpLink);
+                SwitchState(CurState, CatFSM.State.Jump, jumpPlan);
                 return;
             }
         }
@@ -65,6 +67,8 @@ public class CatFsmLocomotion : CatFsmBase
         Quaternion cameraYaw = Quaternion.Euler(0f, m_CachedCmd.CameraYaw, 0f);
         Vector3 localDirection = new Vector3(m_CachedCmd.Direction.x, 0f, m_CachedCmd.Direction.y);
         m_DesiredMoveDirection = Vector3.ClampMagnitude(cameraYaw * localDirection, 1f);
+        // 暴露给扫描器：跳跃候选按期望方向过滤与评分
+        cat.DesiredMoveDirection = m_DesiredMoveDirection;
     }
 
     public override void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime)

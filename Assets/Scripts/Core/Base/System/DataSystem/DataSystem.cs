@@ -5,26 +5,34 @@ using UnityEngine;
 
 public class DataSystem : LogicSystem
 {
-    public ItemDB ItemDB;
     private readonly Dictionary<Type, ScriptableObject> m_DataDict = new();
+
     public override void OnInit()
     {
         base.OnInit();
-        LoadItemDBAsync().Forget();
+        LoadDBAsync<ItemDB>("ItemDB").Forget();
+        LoadDBAsync<TaskDB>("TaskDB").Forget();
     }
 
     public T GetDataDB<T>() where T : ScriptableObject
     {
-        m_DataDict.TryGetValue(typeof(T),out var db);
+        m_DataDict.TryGetValue(typeof(T), out var db);
         return db as T;
     }
 
-    private async UniTaskVoid LoadItemDBAsync()
+    private async UniTaskVoid LoadDBAsync<T>(string key) where T : ScriptableObject
     {
-        var cfg = await GameRoot.Instance.GameLoader.ConfigLoader.LoadSO<ItemDB>("ItemDB");
-        if (cfg != null)
+        try
         {
-            m_DataDict.TryAdd(typeof(ItemDB), cfg);
+            var db = await GameRoot.Instance.GameLoader.ConfigLoader.LoadSO<T>(key);
+            if (db != null)
+            {
+                m_DataDict.TryAdd(typeof(T), db);
+            }
+        }
+        catch (Exception e)
+        {
+            Log.Error($"数据表加载失败: {key}", e);
         }
     }
 }

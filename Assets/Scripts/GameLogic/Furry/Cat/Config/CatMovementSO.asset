@@ -16,5 +16,8 @@ MonoBehaviour:
   WalkSpeed: 1
   RunSpeed: 2.5
   JumpChargeTime: 0.25
+  JumpSpeed: 2
+  JumpMinDuration: 0.2
+  JumpMaxDuration: 0.8
   RotationSharpness: 6
   Gravity: {x: 0, y: -25, z: 0}

@@ -88,17 +88,6 @@ public class TipsMgr : MonoSingleton<TipsMgr>
             bool behind = false;
             if (visible)
             {
-                var pos = info.Observer.position;
-                float distance = Vector3.Distance(pos, worldPos);
-                if (info.ShowDistance > 0f && distance > info.ShowDistance)
-                {
-                    visible = false;
-                }
-                else if (info.HideWhenOccluded && Physics.Raycast(pos, (worldPos - pos).normalized, distance, m_OcclusionMask, QueryTriggerInteraction.Ignore))
-                {
-                    visible = false;
-                }
-
                 screenPos = m_Cam.WorldToScreenPoint(worldPos);
                 behind = screenPos.z < 0f;
                 if (behind && !info.ClampToScreenEdge)
@@ -107,7 +96,9 @@ public class TipsMgr : MonoSingleton<TipsMgr>
                 }
             }
 
-            item.gameObject.SetActive(visible);
+            var haveDuration = info.Duration >= 0;
+            UIUtils.SetActive(item,haveDuration && visible);
+            if(haveDuration) info.Duration -= Time.deltaTime;
             if (!visible) continue;
 
             item.SetContent(info);
@@ -129,6 +120,11 @@ public class TipsMgr : MonoSingleton<TipsMgr>
                 item.Rect.anchoredPosition = local;
             }
         }
+    }
+
+    private void HandleLandingSurfaceTips()
+    {
+        
     }
 
     private TipsItemCtrl GetOrCreate(int tipId)

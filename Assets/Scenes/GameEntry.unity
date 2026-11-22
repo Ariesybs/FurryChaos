@@ -823,6 +823,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameNet:
+    m_StartHostOnAwake: 0
     m_TransportMode: 0
     m_SteamTransport: {fileID: 845737786}
     m_UnityTransport: {fileID: 1349014872}
@@ -877,7 +878,7 @@ MonoBehaviour:
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2039
 --- !u!114 &1978970170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -968,6 +969,7 @@ MonoBehaviour:
   - {fileID: 6793978960882490991, guid: 5f56a0758e2ac5d41b1cf87df94d8735, type: 3}
   - {fileID: 1636892857780524422, guid: 5fc148d00b7c9ef4980d946296398f42, type: 3}
   - {fileID: -1881156839420998014, guid: 8e52a1689f1a64c4fb296b4f26ed1e1b, type: 3}
+  - {fileID: 3342308512292128231, guid: 57bc165b0cf30374fae69268b12ac17f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

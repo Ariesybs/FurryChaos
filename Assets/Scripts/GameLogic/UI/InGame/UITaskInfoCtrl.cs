@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -7,39 +5,68 @@ using UnityEngine;
 public class UITaskInfoCtrl : MonoBehaviour
 {
     public TextMeshProUGUI m_TaskName;
-    private List<TaskUnit> m_TaskList;
-    void Start()
+
+    private void OnEnable()
     {
         GameEvent.Register<MsgGameTaskUpdate>(OnTaskUpdate);
-        var task = GameRoot.Instance.GamePlay?.TaskSystem?.GetCurTask();
-        UpdateTaskInfo(task);
+        Refresh(); // 晚加入：直接按当前复制状态重建
     }
 
-    private void OnTaskUpdate(MsgGameTaskUpdate msg)
+    private void OnDisable()
     {
-        TaskConfig task;
-        if (msg.task == null)
-        {
-            task = GameRoot.Instance.GamePlay.TaskSystem.GetCurTask();
-            
-        }
-        else
-        {
-            task = msg.task;
-        }
-        UpdateTaskInfo(task);
+        GameEvent.Unregister<MsgGameTaskUpdate>(OnTaskUpdate);
     }
 
-    private void UpdateTaskInfo(TaskConfig cfg)
+    private void OnTaskUpdate(MsgGameTaskUpdate msg) => Refresh();
+
+    private void Refresh()
     {
-        if(cfg == null) return;
-        var taskList = cfg.TaskList;
+        var session = GameRoot.Instance.GamePlay?.TaskSystem?.Session;
+        if (session == null)
+        {
+            m_TaskName.text = "";
+            return;
+        }
+
         var sb = new StringBuilder();
-        sb.Append(cfg.Title + "\n");
-        foreach (var taskUnit in taskList)
+        for (var i = 0; i < session.TaskCount; i++)
         {
-            sb.Append(taskUnit.Description + taskUnit.GetProgressStr() + "\n");
+            var task = session.GetTask(i);
+            var config = TaskSystem.GetConfig(task.TaskId);
+            if (config == null)
+            {
+                continue;
+            }
+
+            var stateStr = task.State switch
+            {
+                TaskState.Active => "(进行中)",
+                TaskState.Completed => "（已完成）",
+                TaskState.Failed => "（已失败）",
+                _ => "",
+            };
+            sb.AppendLine(config.Title + stateStr);
+
+            // 按 TaskId 过滤出这份合约的目标，再用 ConfigIndex 找回配置条目
+            for (var j = 0; j < session.TaskUnitCount; j++)
+            {
+                var taskUnit = session.GetTaskUnit(j);
+                if (taskUnit.TaskId != task.TaskId || taskUnit.ConfigIndex >= config.TaskList.Count)
+                {
+                    continue;
+                }
+
+                var unit = config.TaskList[taskUnit.ConfigIndex];
+                if (unit == null)
+                {
+                    continue;
+                }
+
+                var mark = taskUnit.Current >= taskUnit.Target ? "[√] " : "[ ] ";
+                sb.AppendLine($"  {mark}{unit.Description} {unit.FormatProgress(taskUnit.Current, taskUnit.Target)}");
+            }
         }
-        UIUtils.TmpSetText(m_TaskName,sb.ToString());
+
+        m_TaskName.text = sb.ToString();
     }
 }

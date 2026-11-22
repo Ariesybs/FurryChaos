@@ -8,6 +8,8 @@ public interface IInteractable
     public string GetPrompt(); // 获取可交互物提示
     public bool CanInteract(ulong netEntityId); // 是否可交互
     public InteractType InteractType { get; } // 交互方式
+    public Vector3 GetPos();
+    public void SetHighLight(bool enable);
     public void OnPressInteract(ulong netEntityId);
     public void OnHoldInteract(ulong netEntityId);
 }

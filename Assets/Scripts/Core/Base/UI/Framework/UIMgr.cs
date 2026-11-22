@@ -7,7 +7,7 @@ public static class UIMgr
         Sys?.UIRegister?.Register(prefab);
     }
 
-    public static T Open<T>(IUIArgs args = null) where T : UIPanel
+    public static T Open<T>(object args = null) where T : UIPanel
     {
         return Sys?.Open<T>(args);
     }

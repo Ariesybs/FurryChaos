@@ -9,12 +9,12 @@ public static class UIUtils
 
     public static void SetActive(GameObject go, bool enable)
     {
-        if (go == null)
-        {
-            return;
-        }
-
-        go.SetActive(enable);
+        Utils.SetActive(go,enable);
+    }
+    
+    public static void SetActive(Component t, bool enable)
+    {
+        Utils.SetActive(t,enable);
     }
 
     #endregion
@@ -42,14 +42,7 @@ public static class UIUtils
 
     
 
-    public static void SetActive(Component t, bool enable)
-    {
-        if (t == null)
-        {
-            return;
-        }
-        SetActive(t.gameObject,enable);
-    }
+    
 
     #endregion
 

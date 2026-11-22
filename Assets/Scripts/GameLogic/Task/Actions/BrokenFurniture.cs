@@ -1,28 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 /// <summary>
-/// 打碎家具
+/// 打碎家具。等"合约动作"事件接入后在这里重写对应的判定方法。
 /// </summary>
 public class BrokenFurniture : TaskUnit
 {
-    public override void Init()
-    {
-        
-    }
-
-    public override bool Done()
-    {
-        return false;
-    }
-
-    public override float GetProgress()
-    {
-        return 0;
-    }
-
-    public override string GetProgressStr()
-    {
-        return "1/2";
-    }
 }

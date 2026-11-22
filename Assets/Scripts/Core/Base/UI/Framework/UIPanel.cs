@@ -3,6 +3,7 @@ using UnityEngine;
 public abstract class UIPanel : MonoBehaviour
 {
     [SerializeField] private bool m_CloseOnClickMask = true;
+    [SerializeField] private bool m_EnableShowCursor = true;
 
     public abstract UIDisplayMode DisplayMode { get; }
 
@@ -15,7 +16,7 @@ public abstract class UIPanel : MonoBehaviour
 
     private CanvasGroup m_CanvasGroup;
 
-    internal void HandleOpen(IUIArgs args)
+    internal void HandleOpen(object args)
     {
         gameObject.SetActive(true);
         IsPaused = false;
@@ -44,9 +45,13 @@ public abstract class UIPanel : MonoBehaviour
         OnClose();
     }
 
-    protected virtual void OnOpen(IUIArgs args)
+    protected virtual void OnOpen(object args)
     {
         OnOpen();
+        if (m_EnableShowCursor)
+        {
+            GameCursor.Unlock();
+        }
     }
 
     protected virtual void OnOpen()
@@ -63,6 +68,7 @@ public abstract class UIPanel : MonoBehaviour
 
     protected virtual void OnClose()
     {
+        GameCursor.Lock();
     }
 
     protected void CloseSelf()
@@ -75,7 +81,7 @@ public abstract class UIPanel<TArgs> : UIPanel where TArgs : IUIArgs
 {
     protected TArgs Args { get; private set; }
 
-    protected sealed override void OnOpen(IUIArgs args)
+    protected sealed override void OnOpen(object args)
     {
         if (args is not TArgs typed)
         {

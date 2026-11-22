@@ -35,9 +35,9 @@ public class InteractionDetector : MonoBehaviour
     // 交互
     private void Interact(IInteractable item)
     {
-        if (item.CanInteract(0))
+        if (item.CanInteract(m_LocalPlayerNetId))
         {
-            item.OnPressInteract(0);
+            item.OnPressInteract(m_LocalPlayerNetId);
         }        
     }
 
@@ -65,13 +65,27 @@ public class InteractionDetector : MonoBehaviour
 
         if (now != Current)
         {
+            if (Current != null)
+            {
+                Current.SetHighLight(false);
+            }
             Current = now;
-#if LOCAL_DEBUG
-            Debug.Log(Current != null ? Current.GetPrompt() : "NULL");
-#else
-            Log.Info("InteractionDetector",Current != null ? Current.GetPrompt() : "NULL");
-#endif
-            // 更新UI
+            if (Current != null)
+            {
+                TipsMgr.ShowTip(new TipsInfo()
+                {
+                    TipId = 2,
+                    TipsType = ENUM_TIPS_TYPE.TIPS_INTERACTABLE_ITEM,
+                    Anchor = new TipAnchor { FixedPoint = Current.GetPos() },
+                    KeyHint = "E",
+                    Text = Current.GetPrompt()
+                });
+                Current.SetHighLight(true);
+            }
+            else
+            {
+                TipsMgr.HideTip(2);
+            }
         }
     }
 

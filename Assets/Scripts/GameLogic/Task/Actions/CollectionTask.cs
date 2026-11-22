@@ -1,44 +1,25 @@
-using System;
 using Sirenix.OdinInspector;
 
+/// <summary>
+/// 收集指定物品到目标重量。进度由通用运行时在装车时累加。
+/// </summary>
 public class CollectionTask : TaskUnit
 {
     [LabelText("目标收集物")]
-    public ItemData TargetItem; // 目标收集物
-    
+    public ItemData TargetItem;
+
     [LabelText("目标收集重量/g")]
     public float RequireWeight;
 
-    [NonSerialized]
-    private float CurrentWeight;
+    public override float GetTargetValue() => RequireWeight;
 
-    public override void Init()
+    public override float EvaluateCargoLoaded(MsgCargoLoaded msg)
     {
-        GameEvent.Register<MsgDeliverPointInteracted>(OnCollectionTrigger);
+        return TargetItem != null && msg.ItemId == TargetItem.Id ? msg.Weight : 0f;
     }
 
-    private void OnCollectionTrigger(MsgDeliverPointInteracted msg)
+    public override string FormatProgress(float current, float target)
     {
-        var player = PlayerMgr.Instance.GetPlayer(msg.PlayerNetId);
-        var bag = player?.Bag;
-        if (bag == null) return;
-        var totalWeight = bag.GetItemTotalWeight(TargetItem.Id);
-        CurrentWeight += totalWeight;
-        GameEvent.Trigger(new MsgGameTaskUpdate());
-    }
-
-    public override bool Done()
-    {
-        return CurrentWeight >= RequireWeight;
-    }
-
-    public override float GetProgress()
-    {
-        return CurrentWeight / RequireWeight;
-    }
-
-    public override string GetProgressStr()
-    {
-        return $"{(CurrentWeight * 100f / RequireWeight):0.##}%";
+        return $"{current * 100f / target:0.#}%";
     }
 }
