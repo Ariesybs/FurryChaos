@@ -4,8 +4,13 @@ public abstract class UIPanel : MonoBehaviour
 {
     [SerializeField] private bool m_CloseOnClickMask = true;
     [SerializeField] private bool m_EnableShowCursor = true;
+    [SerializeField, Tooltip("打开期间屏蔽游戏性输入（移动/交互等），HUD 类面板保持关闭")]
+    private bool m_BlocksGameplayInput;
 
     public abstract UIDisplayMode DisplayMode { get; }
+
+    /// <summary>打开期间是否屏蔽游戏性输入，由 UISystem 每帧同步到 InputSystem。</summary>
+    public virtual bool BlocksGameplayInput => m_BlocksGameplayInput;
 
     public virtual bool CloseOnClickMask =>
         DisplayMode == UIDisplayMode.Popup && m_CloseOnClickMask;

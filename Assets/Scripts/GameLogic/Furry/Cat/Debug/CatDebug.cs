@@ -20,7 +20,8 @@ public class CatDebug : NetworkBehaviour
     private GUIStyle labelStyle; // 缓存样式
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.L))
+        var input = GameRoot.Instance.GameInput;
+        if (input != null && input.GetDown(GameAction.DebugPanel))
         {
             slowDown = !slowDown;
             Time.timeScale = slowDown ? 0.2f : 1f;

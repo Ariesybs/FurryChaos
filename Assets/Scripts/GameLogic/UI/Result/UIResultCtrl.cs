@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class UIResultCtrl : UIPanel
 {
     public override UIDisplayMode DisplayMode => UIDisplayMode.FullScreen;
+    // 结算期间屏蔽移动/交互等游戏性输入
+    public override bool BlocksGameplayInput => true;
 
     [SerializeField] private TextMeshProUGUI m_Title;
     [SerializeField] private TextMeshProUGUI m_Summary;
@@ -20,8 +22,24 @@ public class UIResultCtrl : UIPanel
     protected override void OnOpen(object args)
     {
         base.OnOpen(args);
+        GameRoot.Instance.GameInput.ActionDown += OnActionDown;
         if(args is not MatchResult result)return;
         Refresh(result);
+    }
+
+    protected override void OnClose()
+    {
+        // 必须退订，否则事件会持有已关闭的面板
+        GameRoot.Instance.GameInput.ActionDown -= OnActionDown;
+        base.OnClose();
+    }
+
+    private void OnActionDown(GameAction action)
+    {
+        if (action == GameAction.Confirm)
+        {
+            OnClickReturn();
+        }
     }
 
     private void Refresh(MatchResult result)

@@ -24,12 +24,25 @@ public class InteractionDetector : MonoBehaviour
 #endif
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (Input.GetKeyDown(KeyCode.E) && Current != null)
+        GameRoot.Instance.GameInput.ActionDown += OnActionDown;
+    }
+
+    private void OnDisable()
+    {
+        GameRoot.Instance.GameInput.ActionDown -= OnActionDown;
+    }
+
+    private void OnActionDown(GameAction action)
+    {
+        if (action != GameAction.Interact || Current == null ||
+            !GameRoot.Instance.GameInput.GameplayEnabled)
         {
-            Interact(Current);
+            return;
         }
+
+        Interact(Current);
     }
     
     // 交互

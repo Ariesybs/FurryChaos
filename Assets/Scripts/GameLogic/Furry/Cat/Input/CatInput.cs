@@ -31,20 +31,21 @@ public class CatInput
 
     public InputCmd ReadCmd()
     {
-        if (m_LockInput) return InputCmd.Empty;
+        var input = GameRoot.Instance.GameInput;
+        if (m_LockInput || input == null || !input.GameplayEnabled) return InputCmd.Empty;
         var cmd = new InputCmd()
         {
-            Direction =  Vector2.ClampMagnitude(new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")), 1f)
+            Direction = input.ReadMoveAxis()
         };
         var pressedActions = InputAction.None;
         var heldActions = InputAction.None;
-        
-        if (Input.GetKeyDown(KeyCode.Space)) pressedActions |= InputAction.Jump;
-        if (Input.GetKeyDown(KeyCode.C)) pressedActions |= InputAction.Sit;
-        if (Input.GetKeyDown(KeyCode.Z)) pressedActions |= InputAction.Lie;
-        if (Input.GetKey(KeyCode.LeftControl)) heldActions |= InputAction.Crouch;
-        if (Input.GetKey(KeyCode.LeftShift)) heldActions |= InputAction.Run;
-        
+
+        if (input.GetDown(GameAction.Jump)) pressedActions |= InputAction.Jump;
+        if (input.GetDown(GameAction.Sit)) pressedActions |= InputAction.Sit;
+        if (input.GetDown(GameAction.Lie)) pressedActions |= InputAction.Lie;
+        if (input.GetHeld(GameAction.Crouch)) heldActions |= InputAction.Crouch;
+        if (input.GetHeld(GameAction.Run)) heldActions |= InputAction.Run;
+
         cmd.PressedActions = pressedActions;
         cmd.HeldActions = heldActions;
         return cmd;

@@ -970,6 +970,7 @@ MonoBehaviour:
   - {fileID: 1636892857780524422, guid: 5fc148d00b7c9ef4980d946296398f42, type: 3}
   - {fileID: -1881156839420998014, guid: 8e52a1689f1a64c4fb296b4f26ed1e1b, type: 3}
   - {fileID: 3342308512292128231, guid: 57bc165b0cf30374fae69268b12ac17f, type: 3}
+  - {fileID: 161618895974542760, guid: f3fd52ab0a3d2ab408c8591c49e42bfe, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

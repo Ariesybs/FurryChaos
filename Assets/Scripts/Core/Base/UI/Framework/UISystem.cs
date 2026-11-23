@@ -196,7 +196,16 @@ public class UISystem : LogicSystem
 
     public override void OnUpdate(float deltaTime)
     {
-        if (Top != null && Top.AllowEscapeClose && Input.GetKeyDown(KeyCode.Escape))
+        var input = GameRoot.Instance.GameInput;
+        if (input == null)
+        {
+            return;
+        }
+
+        // 栈顶面板拦截输入时，游戏性输入整体静默
+        input.GameplayEnabled = Top == null || !Top.BlocksGameplayInput;
+
+        if (Top != null && Top.AllowEscapeClose && input.GetDown(GameAction.Pause))
         {
             Close();
         }

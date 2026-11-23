@@ -20,6 +20,7 @@ public class GameRoot : MonoBehaviour
     public UISystem GameUI; // UI系统
     public GamePlaySystem GamePlay; // 核心玩法系统
     public DataSystem GameData;
+    public InputSystem GameInput; // 输入系统
     #endregion
     
     private readonly Dictionary<Type, ISystem> m_GameSystems = new();
@@ -62,6 +63,7 @@ public class GameRoot : MonoBehaviour
         GameLoader = RegisterSystem(new LoadSystem());
         GamePlay = RegisterSystem(new GamePlaySystem());
         GameData = RegisterSystem(new DataSystem());
+        GameInput = RegisterSystem(new InputSystem());
     }
     private void InitializeSystems()
     {
